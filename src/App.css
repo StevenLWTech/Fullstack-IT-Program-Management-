@@ -59,7 +59,12 @@ th:last-child {
 .table-row {
   padding-top: 15px;
 }
-
+.search-wrapper {
+  padding-bottom: 16px;
+}
+.search-wrapper input{
+  min-height: 36px;
+}
 .dropdown-container select {
   min-height: 50px;
   padding-left: 16px;
@@ -83,4 +88,7 @@ select {
 }
 th {
   width: calc(100% / 5);
+}
+#clear{
+  background-color: lightgrey;
 }

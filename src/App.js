@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
+import renderDropDowns from "./"
 
 function App() {
   const [data, setData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleClearFilters = () => {
+    setSelectedValues([]);
+  };
 
   const fetchData = async () => {
     try {
@@ -23,6 +29,7 @@ function App() {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
+    setSearchQuery("");
   };
 
   const handleResetDropdownChange = (event) => {
@@ -50,8 +57,9 @@ function App() {
 
   const renderDropdowns = () => {
     const columns = Object.keys(data[0] || {});
+    const dropdownColumns = columns.slice(0, -1);
 
-    return columns.map((column, index) => (
+    return dropdownColumns.map((column, index) => (
       <div key={index} className="dropdown-container">
         <select
           id={`dropdown-${index}`}
@@ -62,11 +70,16 @@ function App() {
           <option key="default" value="" disabled defaultValue>
             {column}
           </option>
-          {removeDuplicatesAndFilter(column, index, columns).map((value, i) => (
-            <option key={i} value={value}>
-              {value}
-            </option>
-          ))}
+          <option id="clear" key="clear" value="">
+            Cancel
+          </option>
+          {removeDuplicatesAndFilter(column, index, dropdownColumns).map(
+            (value, i) => (
+              <option key={i} value={value}>
+                {value}
+              </option>
+            )
+          )}
         </select>
       </div>
     ));
@@ -90,30 +103,69 @@ function App() {
   );
 
   const renderFilteredData = () => {
-    if (selectedValues.some((value) => value)) {
+    if (selectedValues.some((value) => value) || searchQuery) {
       const columns = Object.keys(data[0] || {});
-      const filteredData = data.filter((row) =>
-        selectedValues.every(
-          (value, index) => !value || row[columns[index]] === value
+      const filteredData = data
+        .filter((row) =>
+          selectedValues.every(
+            (value, index) => !value || row[columns[index]] === value
+          )
         )
-      );
-      console.log(columns);
+        .filter((row) => {
+          const values = Object.values(row).join("").toLowerCase();
+          return values.includes(searchQuery.toLowerCase());
+        });
+      //console.log(filteredData);
       return (
         <div className="filtered-data">
           <table className="filtered-data-table">
             <thead>
               <tr>
-                {columns.map((column, index) => (
-                  <th className="table-header" key={index}>{column}</th>
+                {columns.slice(0,-1).map((column, index) => (
+                  <th className="table-header" key={index}>
+                    {column}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filteredData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {columns.map((column, columnIndex) => (
-                    <td className="table-row" key={columnIndex}>{row[column]}</td>
-                  ))}
+                  {columns.slice(0,-1).map((column, columnIndex) => {
+                    if (row[column] === null) {
+                                          
+                      return (
+                        <td className="table-row" key={columnIndex}>
+                          <a
+                            href={row[columns[5]]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {row[columns[columnIndex - 1]]} 
+                          </a>
+                        </td>
+                      );
+                    
+                    } else if (columnIndex === 2) {
+                      return (
+                        <td className="table-row" key={columnIndex}>
+                          <a
+                            href={row[columns[5]]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {row[column]}
+                          </a>
+                        </td>
+                      );
+                    } else {
+                      return (
+                        <td className="table-row" key={columnIndex}>
+                          {row[column]}
+                        </td>
+                      );
+                    }
+                  })}
                 </tr>
               ))}
             </tbody>
@@ -124,17 +176,27 @@ function App() {
     return null;
   };
   
-  
+
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
   return (
     <div className="App">
       <div className="container">
         <h1>Search IT Programs</h1>
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+          />
+        </div>
         <div className="dropdowns-wrapper">
           {data.length ? renderDropdowns() : <p>Loading...</p>}
+          <button onClick={handleClearFilters}>Clear Filters</button>
         </div>
-        {/* <div className="reset-dropdown-wrapper">
-        {data.length ? renderResetDropdown() : null}
-      </div> */}
         <div className="filtered-data-wrapper">
           {data.length ? renderFilteredData() : null}
         </div>
