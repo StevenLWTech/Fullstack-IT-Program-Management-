@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
-import renderDropDowns from "./"
+import renderDropDowns from "./";
 
 function App() {
   const [data, setData] = useState([]);
@@ -17,8 +17,21 @@ function App() {
   };
 
   const fetchData = async () => {
+    console.log("Fetching data...");
     try {
-      const response = await axios.get("http://localhost:8000/api/data");
+      const response = await axios.get(
+        "https://sbctcfunction.azurewebsites.net/api/sbctcAPI",
+        {
+          headers: {
+            "Access-Control-Allow-Origin":
+              "https://sbctc.z13.web.core.windows.net",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+      console.log("Data fetched:", response.data);
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -85,23 +98,6 @@ function App() {
     ));
   };
 
-  const renderResetDropdown = () => (
-    <div className="dropdown-container">
-      <select
-        id="dropdown-reset"
-        name="dropdown-reset"
-        onChange={handleResetDropdownChange}
-      >
-        <option key="default" value="" disabled selected>
-          Clear Choices
-        </option>
-        <option key="reset" value="reset">
-          Clear
-        </option>
-      </select>
-    </div>
-  );
-
   const renderFilteredData = () => {
     if (selectedValues.some((value) => value) || searchQuery) {
       const columns = Object.keys(data[0] || {});
@@ -121,7 +117,7 @@ function App() {
           <table className="filtered-data-table">
             <thead>
               <tr>
-                {columns.slice(0,-1).map((column, index) => (
+                {columns.slice(0, -1).map((column, index) => (
                   <th className="table-header" key={index}>
                     {column}
                   </th>
@@ -131,9 +127,8 @@ function App() {
             <tbody>
               {filteredData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {columns.slice(0,-1).map((column, columnIndex) => {
+                  {columns.slice(0, -1).map((column, columnIndex) => {
                     if (row[column] === null) {
-                                          
                       return (
                         <td className="table-row" key={columnIndex}>
                           <a
@@ -141,11 +136,10 @@ function App() {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {row[columns[columnIndex - 1]]} 
+                            {row[columns[columnIndex - 1]]}
                           </a>
                         </td>
                       );
-                    
                     } else if (columnIndex === 2) {
                       return (
                         <td className="table-row" key={columnIndex}>
@@ -175,7 +169,6 @@ function App() {
     }
     return null;
   };
-  
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
