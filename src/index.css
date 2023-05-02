@@ -4,7 +4,12 @@
   min-height: 100vh;
 }
 .search-wrapper{
+  min-width: 50%;
   max-width: 100%;
+  padding-top: 24px;
+}
+input{
+  min-width: 50%;
 }
 .container {
   max-width: 1280px;
@@ -20,9 +25,6 @@
 }
 
 
-.filtered-data {
-  justify-content: space-between;
-}
 
 .filtered-data th {
   text-align: left;
@@ -39,22 +41,12 @@ table {
   width: 100%;
   table-layout: fixed;
 }
-
-th:first-child {
-  width: 15%;
+/* th:first-child{
+  width: 25%;
 }
-
-th:last-child {
-  width: 15%;
-}
-
-.filtered-data th:nth-child(2) {
-  width: 12%;
-}
-
-.filtered-data th:nth-child(4) {
-  width: 20%;
-}
+.filtered-data th:nth-child(2){
+  width: 25%;
+} */
 
 
 

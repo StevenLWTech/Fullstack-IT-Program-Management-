@@ -8,12 +8,14 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
   const [hideLastColumn, setHideLastColumn] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
   useEffect(() => {
     fetchData();
   }, []);
 
   const handleClearFilters = () => {
     setSelectedValues([]);
+    setSearchQuery("");
   };
 
   const fetchData = async () => {
@@ -74,6 +76,8 @@ function App() {
   };
   const toggleHideLastColumn = () => {
     setHideLastColumn(!hideLastColumn);
+    setIsVisible(!isVisible);
+    
   };
   const renderDropdowns = () => {
     const columns = Object.keys(data[0] || {});
@@ -143,8 +147,9 @@ function App() {
   };
 
   const renderFilteredData = () => {
+    const columns = Object.keys(data[0] || {});
+    
     if (selectedValues.some((value) => value) || searchQuery) {
-      const columns = Object.keys(data[0] || {});
       const filteredData = data
         .filter((row) =>
           selectedValues.every(
@@ -155,7 +160,6 @@ function App() {
           const values = Object.values(row).join("").toLowerCase();
           return values.includes(searchQuery.toLowerCase());
         });
-      //console.log(filteredData);
       return (
         <div className="filtered-data">
           <table className="filtered-data-table">
@@ -172,13 +176,13 @@ function App() {
               {filteredData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {columns.slice(0, -1).map((column, columnIndex) => {
-                    
                     if (row[column] === null) {
                       return (
                         <td className="table-row" key={columnIndex}>
                           <a
                             href={row[columns[5]]}
-                            
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
                             {row[columns[columnIndex - 1]]}
                           </a>
@@ -189,7 +193,63 @@ function App() {
                         <td className="table-row" key={columnIndex}>
                           <a
                             href={row[columns[5]]}
-                            
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {row[column]}
+                          </a>
+                        </td>
+                      );
+                    } else {
+                      return (
+                        <td className="table-row" key={columnIndex}>
+                          {row[column]}
+                        </td>
+                      );
+                    }
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    } else {
+      return (
+        <div className="filtered-data">
+          <table className="filtered-data-table">
+            <thead>
+              <tr>
+                {columns.slice(0, -1).map((column, index) => (
+                  <th className="table-header" key={index}>
+                    {column}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {columns.slice(0, -1).map((column, columnIndex) => {
+                    if (row[column] === null) {
+                      return (
+                        <td className="table-row" key={columnIndex}>
+                          <a
+                            href={row[columns[5]]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {row[columns[columnIndex - 1]]}
+                          </a>
+                        </td>
+                      );
+                    } else if (columnIndex === 2) {
+                      return (
+                        <td className="table-row" key={columnIndex}>
+                          <a
+                            href={row[columns[5]]}
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
                             {row[column]}
                           </a>
@@ -212,6 +272,7 @@ function App() {
     }
     return null;
   };
+  
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -221,20 +282,23 @@ function App() {
     <div className="App">
       <div className="container">
         <h1>Search IT Programs</h1>
-        <div className="search-wrapper">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-          />
-        </div>
         <div className="dropdowns-wrapper">
           {data.length ? renderDropdowns() : <p>Loading...</p>}
           <button onClick={handleClearFilters}>Clear Filters</button>
         </div>
+        <div className="search-wrapper">
+          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>{isVisible ? "More Filters" : "Less Filters"}</button>
+          {isVisible && (
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            
+            onChange={handleSearchInputChange}
+          />)}
+        </div>
         <div className="filtered-data-wrapper">
-          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>More Filters</button>
+          
           {data.length ? renderFilteredData() : null}
         </div>
       </div>
