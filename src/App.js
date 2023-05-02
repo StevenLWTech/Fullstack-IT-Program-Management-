@@ -7,7 +7,7 @@ function App() {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
-
+  const [hideLastColumn, setHideLastColumn] = useState(true);
   useEffect(() => {
     fetchData();
   }, []);
@@ -17,7 +17,7 @@ function App() {
   };
 
   const fetchData = async () => {
-    console.log("Fetching data...");
+    //console.log("Fetching data...");
     try {
       const response = await axios.get(
         "https://sbctcfunction.azurewebsites.net/api/sbctcAPI",
@@ -31,32 +31,27 @@ function App() {
           },
         }
       );
-      console.log("Data fetched:", response.data);
-      setData(response.data);
+      const modifiedData = response.data.map((item) => {
+        const keys = Object.keys(item);
+        const programNameIndex = keys.indexOf("Program Name");
+        keys.splice(programNameIndex, 1);
+        keys.splice(-1, 0, "Program Name");
+        const entries = keys.map((key) => [key, item[key]]);
+        return Object.fromEntries(entries);
+      });
+      //console.log("Data fetched:", modifiedData);
+      setData(modifiedData);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      //console.error("Error fetching data:", error);
     }
   };
+  
 
   const handleDropdownChange = (event, index) => {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
-  
-    // Disable the "Program Name" dropdown until at least one other dropdown has been selected
-    const programNameDropdown = document.getElementById("dropdown-2");
-    if (index === 0 || index === 1 || (!newSelectedValues[0] || !newSelectedValues[1])) {
-      programNameDropdown.disabled = true;
-    } else {
-      programNameDropdown.disabled = false;
-    }
-  };
-  
-  
-  
-
-  const handleResetDropdownChange = (event) => {
-    setSelectedValues([]);
+    setSearchQuery("");
   };
 
   const removeDuplicatesAndFilter = (column, columnIndex, columns) => {
@@ -77,49 +72,75 @@ function App() {
     uniqueValues.sort();
     return uniqueValues;
   };
-
+  const toggleHideLastColumn = () => {
+    setHideLastColumn(!hideLastColumn);
+  };
   const renderDropdowns = () => {
     const columns = Object.keys(data[0] || {});
     const dropdownColumns = columns.slice(0, -1);
-  
-    return dropdownColumns.map((column, index) => {
-      const uniqueValues = Array.from(
-        new Set(data.map((row) => row[column]))
-      );
-      uniqueValues.sort();
-  
-      return (
-        <div key={index} className="dropdown-container">
-          <select
-            id={`dropdown-${index}`}
-            name={`dropdown-${index}`}
-            value={selectedValues[index] || ""}
-            onChange={(event) => handleDropdownChange(event, index)}
-            disabled={index === 2 || (index === 2 && selectedValues[0] === "" && selectedValues[1] === "")}
-          >
-            <option key="default" value="" disabled defaultValue>
-              {column}
-            </option>
-            <option id="clear" key="clear" value="">
-              Cancel
-            </option>
-            {uniqueValues.map((value, i) => (
-              <option key={i} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </div>
-      );
-    });
-  };
-  
-  
-  
-  
-  
-  
+    // dropdownColumns = [
+    //   ...dropdownColumns.slice(0, 2),
+    //   ...dropdownColumns.slice(3),
+    //   dropdownColumns[2],
+    // ];
 
+    return (
+      <>
+        {dropdownColumns.slice(0, -1).map((column, index) => (
+          <div key={index} className="dropdown-container">
+            <select
+              id={`dropdown-${index}`}
+              name={`dropdown-${index}`}
+              value={selectedValues[index] || ""}
+              onChange={(event) => handleDropdownChange(event, index)}
+            >
+              <option key="default" value="" disabled defaultValue>
+                {column}
+              </option>
+              <option id="clear" key="clear" value="">
+                
+              </option>
+              {removeDuplicatesAndFilter(column, index, dropdownColumns).map(
+                (value, i) => (
+                  <option key={i} value={value}>
+                    {value}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
+        ))}
+        {hideLastColumn ? null : (
+          <div className="dropdown-container">
+            <select
+              id={`dropdown-${dropdownColumns.length - 1}`}
+              name={`dropdown-${dropdownColumns.length - 1}`}
+              value={selectedValues[dropdownColumns.length - 1] || ""}
+              onChange={(event) =>
+                handleDropdownChange(event, dropdownColumns.length - 1)
+              }
+            >
+              <option key="default" value="" disabled defaultValue>
+                {dropdownColumns[dropdownColumns.length - 1]}
+              </option>
+              <option id="clear" key="clear" value="">
+                Cancel
+              </option>
+              {removeDuplicatesAndFilter(
+                dropdownColumns[dropdownColumns.length - 1],
+                dropdownColumns.length - 1,
+                dropdownColumns
+              ).map((value, i) => (
+                <option key={i} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </>
+    );
+  };
 
   const renderFilteredData = () => {
     if (selectedValues.some((value) => value) || searchQuery) {
@@ -151,13 +172,13 @@ function App() {
               {filteredData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {columns.slice(0, -1).map((column, columnIndex) => {
+                    
                     if (row[column] === null) {
                       return (
                         <td className="table-row" key={columnIndex}>
                           <a
                             href={row[columns[5]]}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            
                           >
                             {row[columns[columnIndex - 1]]}
                           </a>
@@ -168,8 +189,7 @@ function App() {
                         <td className="table-row" key={columnIndex}>
                           <a
                             href={row[columns[5]]}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            
                           >
                             {row[column]}
                           </a>
@@ -214,6 +234,7 @@ function App() {
           <button onClick={handleClearFilters}>Clear Filters</button>
         </div>
         <div className="filtered-data-wrapper">
+          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>More Filters</button>
           {data.length ? renderFilteredData() : null}
         </div>
       </div>
