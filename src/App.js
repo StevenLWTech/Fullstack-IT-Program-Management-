@@ -8,7 +8,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
   const [hideLastColumn, setHideLastColumn] = useState(true);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     fetchData();
   }, []);
@@ -287,7 +287,6 @@ function App() {
           <button onClick={handleClearFilters}>Clear Filters</button>
         </div>
         <div className="search-wrapper">
-          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>{isVisible ? "More Filters" : "Less Filters"}</button>
           {isVisible && (
           <input
             type="text"
@@ -296,6 +295,10 @@ function App() {
             
             onChange={handleSearchInputChange}
           />)}
+          <div id = "toggle-more">
+            
+          </div>
+          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>{isVisible ? "Less Filters" : "More Filters"}</button>
         </div>
         <div className="filtered-data-wrapper">
           
