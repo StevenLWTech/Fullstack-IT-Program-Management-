@@ -41,7 +41,7 @@ function App() {
         const entries = keys.map((key) => [key, item[key]]);
         return Object.fromEntries(entries);
       });
-      //console.log("Data fetched:", modifiedData);
+      console.log("Data fetched:", modifiedData);
       setData(modifiedData);
     } catch (error) {
       //console.error("Error fetching data:", error);
