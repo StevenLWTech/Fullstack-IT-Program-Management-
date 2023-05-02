@@ -42,8 +42,18 @@ function App() {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
-    setSearchQuery("");
+  
+    // Disable the "Program Name" dropdown until at least one other dropdown has been selected
+    const programNameDropdown = document.getElementById("dropdown-2");
+    if (index === 0 || index === 1 || (!newSelectedValues[0] || !newSelectedValues[1])) {
+      programNameDropdown.disabled = true;
+    } else {
+      programNameDropdown.disabled = false;
+    }
   };
+  
+  
+  
 
   const handleResetDropdownChange = (event) => {
     setSelectedValues([]);
@@ -71,32 +81,45 @@ function App() {
   const renderDropdowns = () => {
     const columns = Object.keys(data[0] || {});
     const dropdownColumns = columns.slice(0, -1);
-
-    return dropdownColumns.map((column, index) => (
-      <div key={index} className="dropdown-container">
-        <select
-          id={`dropdown-${index}`}
-          name={`dropdown-${index}`}
-          value={selectedValues[index] || ""}
-          onChange={(event) => handleDropdownChange(event, index)}
-        >
-          <option key="default" value="" disabled defaultValue>
-            {column}
-          </option>
-          <option id="clear" key="clear" value="">
-            Cancel
-          </option>
-          {removeDuplicatesAndFilter(column, index, dropdownColumns).map(
-            (value, i) => (
+  
+    return dropdownColumns.map((column, index) => {
+      const uniqueValues = Array.from(
+        new Set(data.map((row) => row[column]))
+      );
+      uniqueValues.sort();
+  
+      return (
+        <div key={index} className="dropdown-container">
+          <select
+            id={`dropdown-${index}`}
+            name={`dropdown-${index}`}
+            value={selectedValues[index] || ""}
+            onChange={(event) => handleDropdownChange(event, index)}
+            disabled={index === 2 || (index === 2 && selectedValues[0] === "" && selectedValues[1] === "")}
+          >
+            <option key="default" value="" disabled defaultValue>
+              {column}
+            </option>
+            <option id="clear" key="clear" value="">
+              Cancel
+            </option>
+            {uniqueValues.map((value, i) => (
               <option key={i} value={value}>
                 {value}
               </option>
-            )
-          )}
-        </select>
-      </div>
-    ));
+            ))}
+          </select>
+        </div>
+      );
+    });
   };
+  
+  
+  
+  
+  
+  
+
 
   const renderFilteredData = () => {
     if (selectedValues.some((value) => value) || searchQuery) {
