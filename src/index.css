@@ -28,6 +28,36 @@
   text-align: left;
 }
 
+.filtered-data td {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th:first-child {
+  width: 15%;
+}
+
+th:last-child {
+  width: 15%;
+}
+
+.filtered-data th:nth-child(2) {
+  width: 12%;
+}
+
+.filtered-data th:nth-child(4) {
+  width: 20%;
+}
+
+
+
 .dropdowns-container {
   display: flex;
   flex-wrap: wrap;
