@@ -42,11 +42,25 @@ function App() {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
-  
+    
     // Disable the "Program Name" dropdown until at least one other dropdown has been selected
     const programNameDropdown = document.getElementById("dropdown-2");
-    if (index === 0 || index === 1 || (!newSelectedValues[0] || !newSelectedValues[1])) {
+    var anySelected = "";
+    var dropdown = "dropdown-";
+    var count = 0;
+    while(true){
+      const currentDropDown = document.getElementById(dropdown+count)
+      if(currentDropDown){
+        anySelected += currentDropDown.value;
+      }else{
+        break;
+      }
+      count++;
+    }
+    
+    if (anySelected === "") {
       programNameDropdown.disabled = true;
+      programNameDropdown.value = "";
     } else {
       programNameDropdown.disabled = false;
     }
