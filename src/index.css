@@ -26,13 +26,17 @@ input{
 .select-invisible {
   display: none;
 }
+
+#clear-filters {
+  float: right;
+  min-height: 25px;
+  text-align: left;
+}
+
 #toggle-more-filters {
   float: right;
-  min-height: 50px;
-}
-#toggle-more{
-  min-height: 50px;
-  background-color: red;
+  min-height: 25px;
+  text-align: left;
 }
 
 .filtered-data th {
