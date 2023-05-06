@@ -76,6 +76,9 @@ th:last-child {
   max-width: 100%;
 }
 
+  }
+}
+
 .dropdown-container {
   flex: 1;
   margin-right: 10px;
