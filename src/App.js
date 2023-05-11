@@ -305,7 +305,8 @@ function App() {
         <h1>Search IT Programs</h1>
         <div className="dropdowns-wrapper">
           {data.length ? renderDropdowns() : <p>Loading...</p>}
-          <button onClick={handleClearFilters}>Clear Filters</button>
+          <button id = "clear-filters" onClick={handleClearFilters}>Clear Filters</button>
+          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>{isVisible ? "Less Filters" : "More Filters"}</button>
         </div>
         <div className="search-wrapper">
           {isVisible && (
@@ -316,10 +317,7 @@ function App() {
             
             onChange={handleSearchInputChange}
           />)}
-          <div id = "toggle-more">
-            
-          </div>
-          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>{isVisible ? "Less Filters" : "More Filters"}</button>
+          
         </div>
         <div className="filtered-data-wrapper">
           
