@@ -134,6 +134,7 @@ th {
   min-width: 480px;
   margin: 0 auto;
   padding-top: 24px;
+  min-height: 100vh;
 
 }
 .button-form {
@@ -174,5 +175,27 @@ th {
 .btn-group, .btn-group-vertical {
   --mdb-btn-box-shadow: none;
   --mdb-btn-hover-box-shadow: none;
+}
+.form-outline{
+  display: flex;
+}
+.error-message{
+  color: red;
+  padding-left: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.form-select.error {
+
+  max-width: 300px;
+}
+
+.form-outline input{
+  max-width:  100px;
+
+}
+.form-outline{
+  padding: 8px;
 }
 

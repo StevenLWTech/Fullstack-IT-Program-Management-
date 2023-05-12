@@ -312,7 +312,7 @@ function Home({data}) {
             type="text"
             placeholder="Search..."
             value={searchQuery}
-            
+            className="search-box"
             onChange={handleSearchInputChange}
           />)}
           

@@ -44,8 +44,9 @@ function App() {
   return (
     <Router>
       <Header />
-      <Crud data={data} />
       <Routes>
+      
+        <Route path="/admin" element={<Crud data={data} />} />
         <Route path="/" element={<Home data={data} />} />
         {/* <Route path = "/admin" {Admin}/> */}
       </Routes>

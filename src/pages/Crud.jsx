@@ -1,47 +1,79 @@
 import React, { useState } from "react";
+import UniqueDropdown from "../components/UniqueDropdown";
+import axios from "axios";
 
 export default function Crud({ data }) {
   const [showForm, setShowForm] = useState(false);
+  const [updateCounter, setUpdateCounter] = useState(0);
   const [formData, setFormData] = useState({
-    college: "",
-    programName: "",
-    category: "",
-    programType: "",
-    region: "",
+    College: "",
+    "Program Type": "",
+    "Program Name": "",
+    Category: "",
+    Region: "",
+    Hyperlink: "",
   });
-  console.log(data);
+  const [formErrors, setFormErrors] = useState({
+    College: false,
+    "Program Type": false,
+    "Program Name": false,
+    Category: false,
+    Region: false,
+    Hyperlink: false,
+  });
+
   if (data === null) {
-    // Data is still loading, show a loading state
     return <p>Loading...</p>;
   }
 
   if (data.length === 0) {
-    // Data is empty, show an appropriate message
     return <p>No data available.</p>;
   }
+
   const handleCreate = () => {
-    setShowForm((prevShowForm) => !prevShowForm); // Toggle the value of showForm
+    setShowForm((prevShowForm) => !prevShowForm);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission logic
-    console.log(formData);
-    // Reset the form
-    setFormData({
-      college: "",
-      programName: "",
-      category: "",
-      programType: "",
-      region: "",
+
+    // Perform form validation
+    let hasErrors = false;
+    const updatedFormErrors = { ...formErrors };
+
+    // Check if any field is empty or null
+    Object.keys(formData).forEach((field) => {
+      if (!formData[field]) {
+        updatedFormErrors[field] = true;
+        hasErrors = true;
+      } else {
+        updatedFormErrors[field] = false;
+      }
     });
+
+    if (hasErrors) {
+      setFormErrors(updatedFormErrors);
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:8000/api/insert", formData);
+      console.log("Data inserted successfully!");
+      setUpdateCounter((prevCounter) => prevCounter + 1);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+    }
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const handleFormChange = (name, value) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
+    }));
+
+    setFormErrors((prevFormErrors) => ({
+      ...prevFormErrors,
+      [name]: false,
     }));
   };
 
@@ -53,94 +85,129 @@ export default function Crud({ data }) {
         </button>
         <button className="btn btn-dark">Edit</button>
         <button className="btn btn-dark">Delete</button>
-        <button className="btn btn-dark" onClick={handleSubmit}>
-          Submit
-        </button>
       </div>
       <div className="button-form">
         {showForm && (
-          <form onSubmit={handleSubmit}>
-            <div className="form-outline mb-4">
-              <select
-                id="college"
-                name="college"
-                className="form-select"
-                value={formData.college}
-                onChange={handleChange}
-              >
-                <option value="" disabled defaultValue>
-                  Select a College
-                </option>
-                {data &&
-                  Object.values(data)
-                    .map((item) => item.College)
-                    .filter(
-                      (value, index, self) => self.indexOf(value) === index
-                    )
-                    .map((college, index) => (
-                      <option key={index} value={college}>
-                        {college}
-                      </option>
-                    ))}
-              </select>
-            </div>
-            <div className="form-outline mb-4">
-              <input
-                type="text"
-                id="programName"
-                name="programName"
-                className="form-control"
-                value={formData.programName}
-                onChange={handleChange}
-              />
-              <label className="form-label" htmlFor="programName">
-                Program Name
-              </label>
-            </div>
-            <div className="form-outline mb-4">
-              <input
-                type="text"
-                id="category"
-                name="category"
-                className="form-control"
-                value={formData.category}
-                onChange={handleChange}
-              />
-              <label className="form-label" htmlFor="category">
-                Category
-              </label>
-            </div>
-            <div className="form-outline mb-4">
-              <input
-                type="text"
-                id="programType"
-                name="programType"
-                className="form-control"
-                value={formData.programType}
-                onChange={handleChange}
-              />
-              <label className="form-label" htmlFor="programType">
-                Program Type
-              </label>
-            </div>
-            <div className="form-outline mb-4">
-              <input
-                type="text"
-                id="region"
-                name="region"
-                className="form-control"
-                value={formData.region}
-                onChange={handleChange}
-              />
-              <label className="form-label" htmlFor="region">
-                Region
-              </label>
-            </div>
+          <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+            <UniqueDropdown
+              data={data}
+              label="College"
+              onChange={handleFormChange}
+              error={formErrors.College}
+            />
+            <UniqueDropdown
+              data={data}
+              label="Program Name"
+              onChange={handleFormChange}
+              error={formErrors["Program Name"]}
+            />
+            <UniqueDropdown
+              data={data}
+              label="Program Type"
+              onChange={handleFormChange}
+              error={formErrors["Program Type"]}
+            />
+            <UniqueDropdown
+              data={data}
+              label="Category"
+              onChange={handleFormChange}
+              error={formErrors["Category"]}
+            />
+            <UniqueDropdown
+              data={data}
+              label="Region"
+              onChange={handleFormChange}
+              error={formErrors["Region"]}
+            />
+            <UniqueDropdown
+              data={data}
+              label="Hyperlink"
+              onChange={handleFormChange}
+              error={formErrors["Hyperlink"]}
+            />
             <button type="submit" className="btn btn-primary btn-block">
               Submit
             </button>
           </form>
         )}
+      </div>
+
+      <div class="card">
+        <h3 class="card-header text-center font-weight-bold text-uppercase py-4">
+          Delete Rows
+        </h3>
+        <div class="card-body">
+          <div id="table" class="table-editable">
+            <span class="table-add float-right mb-3 mr-2">
+              <a href="#!" class="text-success">
+                <i class="fas fa-plus fa-2x" aria-hidden="true"></i>
+              </a>
+            </span>
+            <table class="table table-bordered table-responsive-md table-striped text-center">
+              <thead>
+                <tr>
+                  {Object.keys(data[0] || {})
+                    .slice(0, -1)
+                    .map((column, index) => (
+                      <th className="text-center" key={index}>
+                        {column}
+                      </th>
+                    ))}
+                </tr>
+              </thead>
+              <tbody>
+
+               
+                       
+                <tr class="hide">
+                  <td class="pt-3-half" contenteditable="true">
+                    Elisa Gallagher
+                  </td>
+                  <td class="pt-3-half" contenteditable="true">
+                    31
+                  </td>
+                  <td class="pt-3-half" contenteditable="true">
+                    Portica
+                  </td>
+                  <td class="pt-3-half" contenteditable="true">
+                    United Kingdom
+                  </td>
+                  <td class="pt-3-half" contenteditable="true">
+                    London
+                  </td>
+                  <td class="pt-3-half">
+                    <span class="table-up">
+                      <a href="#!" class="indigo-text">
+                        <i
+                          class="fas fa-long-arrow-alt-up"
+                          aria-hidden="true"
+                        ></i>
+                      </a>
+                    </span>
+                    <span class="table-down">
+                      <a href="#!" class="indigo-text">
+                        <i
+                          class="fas fa-long-arrow-alt-down"
+                          aria-hidden="true"
+                        ></i>
+                      </a>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="table-remove">
+                      <button
+                        type="button"
+                        class="btn btn-danger btn-rounded btn-sm my-0"
+                      >
+                        Remove
+                      </button>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

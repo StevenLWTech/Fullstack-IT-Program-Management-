@@ -1,5 +1,14 @@
 const express = require('express');
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+const { Pool } = require('pg');
+const cors = require('cors');
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,12 +17,6 @@ app.use((req, res, next) => {
   next();
 });
 
-const { Pool } = require('pg');
-
-
-const port = 8000;
-
-// Create a connection pool to the PostgreSQL database
 const pool = new Pool({
   host: 'localhost',
   port: 1188,
@@ -22,7 +25,8 @@ const pool = new Pool({
   database: 'sql_demo'
 });
 
-// Define a route that retrieves all data from the "mytable" table
+const port = 8000;
+
 app.get('/api/data', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -36,7 +40,32 @@ app.get('/api/data', async (req, res) => {
   }
 });
 
-// Start the server
+app.post('/api/insert', async (req, res) => {
+  try {
+	const sql = `INSERT INTO mytable ("College", "Program Type", "Program Name", "Category", "Region", "Hyperlink") VALUES ($1, $2, $3, $4, $5, $6)`;
+    const { College, ['Program Type']: programType, ['Program Name']: programName, Category, Region, Hyperlink } = req.body;
+    console.log(res.body)
+    console.log(College);
+    console.log(programType);
+    console.log(programName);
+    console.log(Category);
+    console.log(Region);
+    console.log(Hyperlink);
+    const client = await pool.connect();
+    
+    console.log(sql);
+    const values = [College, programType, programName, Category, Region, Hyperlink];
+    console.log(values);
+
+    await client.query(sql, values);
+    client.release();
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal server error');
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
