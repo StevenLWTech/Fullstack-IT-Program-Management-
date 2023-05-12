@@ -1,54 +1,58 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 
-function Home() {
-  const [data, setData] = useState([]);
+
+function Home({data}) {
+ 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
   const [hideLastColumn, setHideLastColumn] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
-  useEffect(() => {
-    fetchData();
-  }, []);
+  if (data === null) {
+    // Data is still loading, show a loading state
+    return <p>Loading...</p>;
+  }
 
+  if (data.length === 0) {
+    // Data is empty, show an appropriate message
+    return <p>No data available.</p>;
+  }
   const handleClearFilters = () => {
     setSelectedValues([]);
     setSearchQuery("");
   };
 
-  const fetchData = async () => {
-    //console.log("Fetching data...");
-    try {
-    //   const response = await axios.get(
-    //     "https://www.coeforict.org/wp-json/college_programs/v1/college-programs",
-    //     {
+  // const fetchData = async () => {
+  //   //console.log("Fetching data...");
+  //   try {
+  //   //   const response = await axios.get(
+  //   //     "https://www.coeforict.org/wp-json/college_programs/v1/college-programs",
+  //   //     {
 
-    //     }
-    //   );
-    const response = await axios.get("http://localhost:8000/api/data");
+  //   //     }
+  //   //   );
+  //   const response = await axios.get("http://localhost:8000/api/data");
     
-      const modifiedData = response.data.map((item) => {
-        const keys = Object.keys(item);
-        const programNameIndex = keys.indexOf("Program Name");
-        keys.splice(programNameIndex, 1);
-        keys.splice(-1, 0, "Program Name");
-        const entries = keys.map((key) => [key, item[key]]);
-        return Object.fromEntries(entries);
-      });
-      console.log("Data fetched:", modifiedData);
-      setData(modifiedData);
-    } catch (error) {
-      //console.error("Error fetching data:", error);
-    }
-  };
+  //     const modifiedData = response.data.map((item) => {
+  //       const keys = Object.keys(item);
+  //       const programNameIndex = keys.indexOf("Program Name");
+  //       keys.splice(programNameIndex, 1);
+  //       keys.splice(-1, 0, "Program Name");
+  //       const entries = keys.map((key) => [key, item[key]]);
+  //       return Object.fromEntries(entries);
+  //     });
+  //     console.log("Data fetched:", modifiedData);
+  //     setData(modifiedData);
+  //   } catch (error) {
+  //     //console.error("Error fetching data:", error);
+  //   }
+  // };
   
 
   const handleDropdownChange = (event, index) => {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
-    
-    // Disable the "Program Name" dropdown until at least one other dropdown has been selected
+
     const programNameDropdown = document.getElementById("dropdown-2");
     var anySelected = "";
     var dropdown = "dropdown-";

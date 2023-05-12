@@ -1,8 +1,7 @@
+@import "~mdb-ui-kit/css/mdb.min.css";
 * {
   /* padding: 0; */
   margin: 0;
-
-
 }
 .App {
   display: flex;
@@ -10,18 +9,20 @@
   min-height: 100vh;
   padding-bottom: 36px;
 }
-h1{
+h1 {
   padding-top: 16px;
   padding-bottom: 16px;
 }
-.search-wrapper{
+.search-wrapper {
   display: flex;
   justify-content: space-between;
   min-width: 50%;
   max-width: 100%;
+  min-height: 42px;
   padding-top: 24px;
+  padding-bottom: 24px;
 }
-input{
+input {
   min-width: 50%;
   padding-left: 20px;
 }
@@ -30,6 +31,7 @@ input{
   min-width: 480px;
   margin: 0 auto;
 }
+
 .select-invisible {
   display: none;
 }
@@ -62,7 +64,6 @@ table {
   table-layout: fixed;
 }
 
-
 .dropdowns-container {
   display: flex;
   flex-wrap: wrap;
@@ -82,12 +83,12 @@ button {
   border-color: transparent;
 }
 button:hover {
-  background-color: #E8F0FE;
+  background-color: #e8f0fe;
 }
-button{
+button {
   border-radius: 10px;
 }
-input{
+input {
   border-radius: 35px;
 }
 .dropdowns-wrapper {
@@ -104,7 +105,6 @@ input{
   flex: 1;
   margin-right: 10px;
   max-width: 100%;
-  
 }
 
 select {
@@ -114,11 +114,65 @@ select {
 th {
   width: calc(100% / 5);
 }
-.header{
+.header {
   min-height: 107px;
-  background-color: #1C2331;
+  background-color: #1c2331;
 }
-.footer{
+.footer {
   min-height: 107px;
-  background-color: #1C2331;
+  background-color: #1c2331;
 }
+/* Crud.jsx Forms */
+.form-outline {
+  border: #1c2331;
+}
+.form-control {
+  background-color: #b53333;
+}
+.crud-container {
+  max-width: 1280px;
+  min-width: 480px;
+  margin: 0 auto;
+  padding-top: 24px;
+
+}
+.button-form {
+  width: 75%;
+  margin: 0 auto;
+}
+.btn btn-primary btn-block {
+  width: 200px;
+}
+#submit {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.form-border {
+  border: 1px solid #ced4da;
+}
+
+.form-border:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+.form-outline .form-control {
+  background-color: rgb(243, 242, 242);
+}
+.btn-group{
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap; 
+  padding-bottom: 16px; 
+}
+.btn{
+  margin: 16px;
+}
+.btn:hover{
+  background-color: rgb(84, 84, 119);
+}
+.btn-group, .btn-group-vertical {
+  --mdb-btn-box-shadow: none;
+  --mdb-btn-hover-box-shadow: none;
+}
+
