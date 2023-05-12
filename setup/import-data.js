@@ -36,3 +36,21 @@ async function main() {
 }
 
 main();
+// -- Table: public.mytable
+
+// -- DROP TABLE IF EXISTS public.mytable;
+
+// CREATE TABLE IF NOT EXISTS public.mytable
+// (
+//     "College" text COLLATE pg_catalog."default",
+//     "Program Type" text COLLATE pg_catalog."default",
+//     "Program Name" text COLLATE pg_catalog."default",
+//     "Category" text COLLATE pg_catalog."default",
+//     "Region" text COLLATE pg_catalog."default",
+//     "Hyperlink" text COLLATE pg_catalog."default"
+// )
+
+// TABLESPACE pg_default;
+
+// ALTER TABLE IF EXISTS public.mytable
+//     OWNER to postgres;

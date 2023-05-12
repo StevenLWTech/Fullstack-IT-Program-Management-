@@ -64,6 +64,21 @@ export default function Crud({ data }) {
       console.error("Error inserting data:", error);
     }
   };
+  const handleDelete = async (row) => {
+    const college = row.College;
+    const programType = row["Program Type"];
+    const category = row.Category;
+    const region = row.Region;
+    
+    try {
+      await axios.delete(`http://localhost:8000/api/delete/${college}/${programType}/${category}/${region}`);
+
+      console.log("Data deleted successfully!");
+      setUpdateCounter((prevCounter) => prevCounter + 1);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
 
   const handleFormChange = (name, value) => {
     setFormData((prevFormData) => ({
@@ -132,78 +147,63 @@ export default function Crud({ data }) {
         )}
       </div>
 
-      <div class="card">
-        <h3 class="card-header text-center font-weight-bold text-uppercase py-4">
+      <div className="card">
+        <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
           Delete Rows
         </h3>
-        <div class="card-body">
-          <div id="table" class="table-editable">
-            <span class="table-add float-right mb-3 mr-2">
-              <a href="#!" class="text-success">
-                <i class="fas fa-plus fa-2x" aria-hidden="true"></i>
-              </a> 
+        <div className="card-body">
+          <div id="table" className="table-editable">
+            <span className="table-add float-right mb-3 mr-2">
+              <a href="#!" className="text-success">
+                <i className="fas fa-plus fa-2x" aria-hidden="true"></i>
+              </a>
             </span>
-            <table class="table table-bordered table-responsive-md table-striped text-center">
+            <table className="table table-bordered table-responsive-md table-striped text-center">
               <thead>
                 <tr>
-                  {Object.keys(data[0] || {})
-                    .slice(0, -1)
-                    .map((column, index) => (
-                      <th className="text-center" key={index}>
-                        {column}
-                      </th>
-                    ))}
+                  {Object.keys(data[0] || {}).map((column, index) => (
+                    <th className="text-center" key={index}>
+                      {column}
+                    </th>
+                  ))}
+                  <th className="text-center">Remove</th>
                 </tr>
               </thead>
               <tbody>
+                {data.map((row, rowIndex) => {
+                  const modifiedRow = Object.entries(row).reduce(
+                    (acc, [key, value]) => {
+                      if (key === "Program Name") {
+                        acc.splice(1, 0, ["Program Name", value]);
+                      } else {
+                        acc.push([key, value]);
+                      }
+                      return acc;
+                    },
+                    []
+                  );
 
-               
-                       
-                <tr class="hide">
-                  <td class="pt-3-half" contenteditable="true">
-                    Elisa Gallagher
-                  </td>
-                  <td class="pt-3-half" contenteditable="true">
-                    31
-                  </td>
-                  <td class="pt-3-half" contenteditable="true">
-                    Portica
-                  </td>
-                  <td class="pt-3-half" contenteditable="true">
-                    United Kingdom
-                  </td>
-                  <td class="pt-3-half" contenteditable="true">
-                    London
-                  </td>
-                  <td class="pt-3-half">
-                    <span class="table-up">
-                      <a href="#!" class="indigo-text">
-                        <i
-                          class="fas fa-long-arrow-alt-up"
-                          aria-hidden="true"
-                        ></i>
-                      </a>
-                    </span>
-                    <span class="table-down">
-                      <a href="#!" class="indigo-text">
-                        <i
-                          class="fas fa-long-arrow-alt-down"
-                          aria-hidden="true"
-                        ></i>
-                      </a>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="table-remove">
-                      <button
-                        type="button"
-                        class="btn btn-danger btn-rounded btn-sm my-0"
-                      >
-                        Remove
-                      </button>
-                    </span>
-                  </td>
-                </tr>
+                  return (
+                    <tr className="hide" key={rowIndex}>
+                      {modifiedRow.map(([column, value], columnIndex) => (
+                        <td className="pt-3-half" key={columnIndex}>
+                          {value}
+                        </td>
+                      ))}
+                      <td>
+                        <span className="table-remove">
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-rounded btn-sm my-0"
+                            onClick={() => handleDelete(row)}
+                          >
+                            Remove
+                          </button>
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
