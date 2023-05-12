@@ -141,7 +141,7 @@ export default function Crud({ data }) {
             <span class="table-add float-right mb-3 mr-2">
               <a href="#!" class="text-success">
                 <i class="fas fa-plus fa-2x" aria-hidden="true"></i>
-              </a>
+              </a> 
             </span>
             <table class="table table-bordered table-responsive-md table-striped text-center">
               <thead>
