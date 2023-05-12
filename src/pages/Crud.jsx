@@ -4,6 +4,7 @@ import axios from "axios";
 
 export default function Crud({ data }) {
   const [showForm, setShowForm] = useState(false);
+  const [isCardVisible, setIsCardVisible] = useState(true);
   const [updateCounter, setUpdateCounter] = useState(0);
   const [formData, setFormData] = useState({
     College: "",
@@ -91,7 +92,10 @@ export default function Crud({ data }) {
       [name]: false,
     }));
   };
-
+  
+  const toggleCardVisibility = () => {
+    setIsCardVisible((prevState) => !prevState);
+  };
   return (
     <div className="crud-container">
       <div className="btn-group" role="group" aria-label="Basic example">
@@ -99,7 +103,10 @@ export default function Crud({ data }) {
           {showForm ? "Close Form" : "Create"}
         </button>
         <button className="btn btn-dark">Edit</button>
-        <button className="btn btn-dark">Delete</button>
+
+        <button className="btn btn-dark" onClick={toggleCardVisibility}>
+        {showForm ? "Close Form" : "Delete"}
+        </button>
       </div>
       <div className="button-form">
         {showForm && (
@@ -148,6 +155,7 @@ export default function Crud({ data }) {
       </div>
 
       <div className="card">
+        
         <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
           Delete Rows
         </h3>
