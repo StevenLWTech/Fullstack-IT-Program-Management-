@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import './App.css';
 
 function Home({data}) {
  
@@ -21,32 +21,6 @@ function Home({data}) {
     setSearchQuery("");
   };
 
-  // const fetchData = async () => {
-  //   //console.log("Fetching data...");
-  //   try {
-  //   //   const response = await axios.get(
-  //   //     "https://www.coeforict.org/wp-json/college_programs/v1/college-programs",
-  //   //     {
-
-  //   //     }
-  //   //   );
-  //   const response = await axios.get("http://localhost:8000/api/data");
-    
-  //     const modifiedData = response.data.map((item) => {
-  //       const keys = Object.keys(item);
-  //       const programNameIndex = keys.indexOf("Program Name");
-  //       keys.splice(programNameIndex, 1);
-  //       keys.splice(-1, 0, "Program Name");
-  //       const entries = keys.map((key) => [key, item[key]]);
-  //       return Object.fromEntries(entries);
-  //     });
-  //     console.log("Data fetched:", modifiedData);
-  //     setData(modifiedData);
-  //   } catch (error) {
-  //     //console.error("Error fetching data:", error);
-  //   }
-  // };
-  
 
   const handleDropdownChange = (event, index) => {
     const newSelectedValues = [...selectedValues];
@@ -101,11 +75,6 @@ function Home({data}) {
   const renderDropdowns = () => {
     const columns = Object.keys(data[0] || {});
     const dropdownColumns = columns.slice(0, -1);
-    // dropdownColumns = [
-    //   ...dropdownColumns.slice(0, 2),
-    //   ...dropdownColumns.slice(3),
-    //   dropdownColumns[2],
-    // ];
 
     return (
       <>
@@ -114,6 +83,7 @@ function Home({data}) {
             <select
               id={`dropdown-${index}`}
               name={`dropdown-${index}`}
+              class={`${(index === 1 || index === 2 || index === 3)? 'hidden' : ''}`}
               value={selectedValues[index] || ""}
               onChange={(event) => handleDropdownChange(event, index)}
             >
@@ -197,7 +167,7 @@ function Home({data}) {
                   {columns.slice(0, -1).map((column, columnIndex) => {
                     if (row[column] === null) {
                       return (
-                        <td className="table-row" key={columnIndex}>
+                        <td className="table-row"  key={columnIndex}>
                           <a
                             href={row[columns[5]]}
                             target="_blank"
@@ -209,7 +179,7 @@ function Home({data}) {
                       );
                     } else if (columnIndex === 2) {
                       return (
-                        <td className="table-row" key={columnIndex}>
+                        <td className="table-row"  key={columnIndex}>
                           <a
                             href={row[columns[5]]}
                             target="_blank"
@@ -240,7 +210,7 @@ function Home({data}) {
             <thead>
               <tr>
                 {columns.slice(0, -1).map((column, index) => (
-                  <th className="table-header" key={index}>
+                  <th className="table-header" class={`table-header${(index === 1 || index === 2 || index === 3)? ' hidden' : ''}`} key={index}>
                     {column}
                   </th>
                 ))}
@@ -252,7 +222,7 @@ function Home({data}) {
                   {columns.slice(0, -1).map((column, columnIndex) => {
                     if (row[column] === null) {
                       return (
-                        <td className="table-row" key={columnIndex}>
+                        <td className="table-row" class={`table-header${columnIndex === 0 ? ' hidden' : ''}`} key={columnIndex}>
                           <a
                             href={row[columns[5]]}
                             target="_blank"
@@ -264,7 +234,7 @@ function Home({data}) {
                       );
                     } else if (columnIndex === 2) {
                       return (
-                        <td className="table-row" key={columnIndex}>
+                        <td className="table-row" class={`table-header${columnIndex === 2 ? ' hidden' : ''}`} key={columnIndex}>
                           <a
                             href={row[columns[5]]}
                             target="_blank"
@@ -276,7 +246,7 @@ function Home({data}) {
                       );
                     } else {
                       return (
-                        <td className="table-row" key={columnIndex}>
+                        <td className="table-row" class={`table-header${(columnIndex === 3 || columnIndex === 1)? ' hidden' : ''}`} key={columnIndex}>
                           {row[column]}
                         </td>
                       );
