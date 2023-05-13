@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import UniqueDropdown from "../components/UniqueDropdown";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
-import Table from "..components/Table";
 import { move } from "lodash";
-
 
 export default function Crud({ data }) {
   const isDevelopment = process.env.NODE_ENV === "development";
@@ -14,6 +12,7 @@ export default function Crud({ data }) {
   const [editMode, setEditMode] = useState({});
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(true);
+  const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     College: "",
     "Program Type": "",
@@ -43,10 +42,31 @@ export default function Crud({ data }) {
     return <p>No data available.</p>;
   }
 
+  const clearForm = () => {
+    setFormData({
+      College: "",
+      "Program Type": "",
+      "Program Name": "",
+      Category: "",
+      Region: "",
+      Hyperlink: "",
+    });
+    setFormErrors({
+      College: false,
+      "Program Type": false,
+      "Program Name": false,
+      Category: false,
+      Region: false,
+      Hyperlink: false,
+    });
+  };
+  
   const handleCreate = () => {
     setShowCreate((prevShowForm) => !prevShowForm);
     setShowDelete(false);
+    clearForm();
   };
+  
 
   const handleDeleteToggle = () => {
     setShowDelete((prevShowDelete) => !prevShowDelete);
@@ -91,6 +111,14 @@ export default function Crud({ data }) {
     try {
       await axios.post("http://localhost:8000/api/insert", formData);
       console.log("Data inserted successfully!");
+      setSuccessMessage("Success!");
+      clearForm();
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 5000);
+      const response = await axios.get("http://localhost:8000/api/data");
+      const newData = response.data;
+      setData(newData);
     } catch (error) {
       console.error("Error inserting data:", error);
     }
@@ -211,16 +239,10 @@ export default function Crud({ data }) {
   };
 
   const handleDelete = async (row) => {
-    const college = row.College;
-    const programType = row["Program Type"];
-    const category = row.Category;
-    const region = row.Region;
+    const id = row.id;
 
     try {
-      await axios.delete(
-        `http://localhost:8000/api/delete/${college}/${programType}/${category}/${region}`
-      );
-
+      await axios.delete(`http://localhost:8000/api/delete/${id}`);
       console.log("Data deleted successfully!");
 
       const response = await axios.get("http://localhost:8000/api/data");
@@ -263,37 +285,37 @@ export default function Crud({ data }) {
               noValidate
             >
               <UniqueDropdown
-                data={data}
+                data={tableData}
                 label="College"
                 onChange={handleFormChange}
                 error={formErrors.College}
               />
               <UniqueDropdown
-                data={data}
+                data={tableData}
                 label="Program Name"
                 onChange={handleFormChange}
                 error={formErrors["Program Name"]}
               />
               <UniqueDropdown
-                data={data}
+                data={tableData}
                 label="Program Type"
                 onChange={handleFormChange}
                 error={formErrors["Program Type"]}
               />
               <UniqueDropdown
-                data={data}
+                data={tableData}
                 label="Category"
                 onChange={handleFormChange}
                 error={formErrors["Category"]}
               />
               <UniqueDropdown
-                data={data}
+                data={tableData}
                 label="Region"
                 onChange={handleFormChange}
                 error={formErrors["Region"]}
               />
               <UniqueDropdown
-                data={data}
+                data={tableData}
                 label="Hyperlink"
                 onChange={handleFormChange}
                 error={formErrors["Hyperlink"]}
@@ -301,6 +323,9 @@ export default function Crud({ data }) {
               <button type="submit" className="btn btn-primary btn-block">
                 Submit
               </button>
+              {successMessage && (
+                <p className="text-success mt-2">{successMessage}</p>
+              )}
             </form>
           )}
         </div>
@@ -312,19 +337,156 @@ export default function Crud({ data }) {
                 IT PROGRAMS
               </h3>
               <div className="card-body">
-                <Table
-                  tableData={tableData}
-                  editingRowId={editingRowId}
-                  editMode={editMode}
-                  handleEdit={handleEdit}
-                  handleCancelEdit={handleCancelEdit}
-                  handleSaveEdit={handleSaveEdit}
-                  handleSortAscending={handleSortAscending}
-                  handleSortDescending={handleSortDescending}
-                  handleDelete={handleDelete}
-                  showFullText={showFullText}
-                  handleShowFullText={handleShowFullText}
-                />
+                <div id="table" className="table-editable">
+                  <span className="table-add float-right mb-3 mr-2"></span>
+                  <table className="table table-bordered table-responsive-md table-striped text-center">
+                    <thead>
+                      <tr>
+                        {Object.keys(tableData[0] || {}).map(
+                          (column, index) => {
+                            if (index !== 0) {
+                              return (
+                                <td
+                                  className="text-center"
+                                  contentEditable="true"
+                                  key={index}
+                                >
+                                  <div className="admin-header">
+                                    <div id="admin-header-text">{column}</div>
+                                    <div id="admin-sort">
+                                      <button
+                                        className="sort-button"
+                                        onClick={() =>
+                                          handleSortAscending(column)
+                                        }
+                                      >
+                                        <i className="fa-sharp fa-solid fa-sort-up"></i>
+                                      </button>
+                                      <button
+                                        className="sort-button"
+                                        onClick={() =>
+                                          handleSortDescending(column)
+                                        }
+                                      >
+                                        <i className="fa-sharp fa-solid fa-sort-down"></i>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </td>
+                              );
+                            }
+                            return null; // Exclude the first column
+                          }
+                        )}
+                        <th className="text-center" id="action-header">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tableData.map((row) => (
+                        <tr
+                          id={`row-${row.id}`}
+                          className={`hide ${
+                            editingRowId === row.id && editMode[row.id]
+                              ? "highlighted"
+                              : ""
+                          }`}
+                          key={row.id}
+                          suppressContentEditableWarning
+                        >
+                          {Object.entries(row).map(
+                            ([column, value], columnIndex) => {
+                              if (column !== "id") {
+                                return (
+                                  <td className="pt-3-half" key={columnIndex}>
+                                    {value &&
+                                    column === "Hyperlink" &&
+                                    value.length > 30 &&
+                                    !showFullText ? (
+                                      <>
+                                        <div id="admin-show-container">
+                                          <span className="value">
+                                            {value.substring(0, 15)}...
+                                          </span>
+                                          <button
+                                            id="admin-show-button"
+                                            type="button"
+                                            className="btn btn-link btn-sm ml-2"
+                                            onClick={() => handleShowFullText()}
+                                          >
+                                            Show
+                                          </button>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <span className="value">
+                                        {value}
+                                        {value &&
+                                          column === "Hyperlink" &&
+                                          value.length > 30 &&
+                                          showFullText && (
+                                            <button
+                                              type="button"
+                                              className="btn btn-link btn-sm ml-2"
+                                              onClick={() =>
+                                                handleShowFullText()
+                                              }
+                                            >
+                                              Hide
+                                            </button>
+                                          )}
+                                      </span>
+                                    )}
+                                  </td>
+                                );
+                              }
+                              return null; // Exclude the 'Primary ID' column
+                            }
+                          )}
+
+                          <td>
+                            {editingRowId === row.id && editMode[row.id] ? (
+                              <>
+                                <button
+                                  type="button"
+                                  className="btn btn-success btn-sm"
+                                  onClick={() => handleSaveEdit(row)}
+                                >
+                                  <i className="fas fa-check"></i>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-danger btn-sm ml-2"
+                                  onClick={() => handleCancelEdit(row)}
+                                >
+                                  <i className="fas fa-times"></i>
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  className="btn btn-default btn-sm"
+                                  onClick={() => handleEdit(row)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-danger btn-sm ml-2"
+                                  onClick={() => handleDelete(row)}
+                                >
+                                  Remove
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </>
           )}

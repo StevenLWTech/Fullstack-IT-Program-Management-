@@ -85,38 +85,28 @@ app.post("/api/insert", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-app.delete(
-  "/api/delete/:college/:programType/:category/:region",
-  async (req, res) => {
-    // const { College, ['Program Type']: programType, Category, Region } = req.params;
-    const { college, programType, category, region } = req.params;
-    console.log(req.params);
-    console.log(college);
-    console.log(programType);
-    console.log(category);
-    console.log(region);
+app.delete("/api/delete/:id", async (req, res) => {
+  const { id } = req.params;
 
-    try {
-      const client = await pool.connect();
-      const sql =
-        'DELETE FROM mytable WHERE "College" = $1 AND "Program Type" = $2 AND "Category" = $3 AND "Region" = $4';
-
-      const values = [college, programType, category, region];
-      console.log(sql);
-      // console.log(values);
-      await client.query(sql, values);
-      client.release();
-      res.sendStatus(200);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Internal server error");
-    }
+  try {
+    const client = await pool.connect();
+    const sql = "DELETE FROM mytable WHERE id = $1";
+    console.log(sql) 
+    const values = [id];
+    console.log(values);
+    await client.query(sql, values);
+    client.release();
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal server error");
   }
-);
+});
+
 app.put("/api/data/:id", async (req, res) => {
   const { id } = req.params;
   const updatedRow = req.body;
-  console.log(updatedRow)
+  console.log(updatedRow);
   try {
     const client = await pool.connect();
 
