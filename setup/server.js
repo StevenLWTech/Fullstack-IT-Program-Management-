@@ -1,50 +1,63 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const { Pool } = require('pg');
-const cors = require('cors');
+const { Pool } = require("pg");
+const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, DELETE, OPTIONS"
+  );
   next();
 });
 
 const pool = new Pool({
-  host: 'localhost',
+  host: "localhost",
   port: 1188,
-  user: 'postgres',
-  password: 'acidrain',
-  database: 'sql_demo'
+  user: "postgres",
+  password: "acidrain",
+  database: "sql_demo",
 });
 
 const port = 8000;
 
-app.get('/api/data', async (req, res) => {
+app.get("/api/data", async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT * FROM mytable');
+    const result = await client.query("SELECT * FROM mytable");
     const data = result.rows;
     client.release();
     res.json(data);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    res.status(500).send("Internal server error");
   }
 });
 
-app.post('/api/insert', async (req, res) => {
+app.post("/api/insert", async (req, res) => {
   try {
-	const sql = `INSERT INTO mytable ("College", "Program Type", "Program Name", "Category", "Region", "Hyperlink") VALUES ($1, $2, $3, $4, $5, $6)`;
-    const { College, ['Program Type']: programType, ['Program Name']: programName, Category, Region, Hyperlink } = req.body;
-    console.log(res.body)
+    const sql = `INSERT INTO mytable ("College", "Program Type", "Program Name", "Category", "Region", "Hyperlink") VALUES ($1, $2, $3, $4, $5, $6)`;
+    const {
+      College,
+      ["Program Type"]: programType,
+      ["Program Name"]: programName,
+      Category,
+      Region,
+      Hyperlink,
+    } = req.body;
+    console.log(res.body);
     console.log(College);
     console.log(programType);
     console.log(programName);
@@ -52,9 +65,16 @@ app.post('/api/insert', async (req, res) => {
     console.log(Region);
     console.log(Hyperlink);
     const client = await pool.connect();
-    
+
     console.log(sql);
-    const values = [College, programType, programName, Category, Region, Hyperlink];
+    const values = [
+      College,
+      programType,
+      programName,
+      Category,
+      Region,
+      Hyperlink,
+    ];
     console.log(values);
 
     await client.query(sql, values);
@@ -62,35 +82,66 @@ app.post('/api/insert', async (req, res) => {
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    res.status(500).send("Internal server error");
   }
 });
-app.delete('/api/delete/:college/:programType/:category/:region', async (req, res) => {
-  // const { College, ['Program Type']: programType, Category, Region } = req.params;
-  const { college, programType, category, region } = req.params;
-  console.log(req.params);
-  console.log(college);
-  console.log(programType);
-  console.log(category);
-  console.log(region);
+app.delete(
+  "/api/delete/:college/:programType/:category/:region",
+  async (req, res) => {
+    // const { College, ['Program Type']: programType, Category, Region } = req.params;
+    const { college, programType, category, region } = req.params;
+    console.log(req.params);
+    console.log(college);
+    console.log(programType);
+    console.log(category);
+    console.log(region);
 
+    try {
+      const client = await pool.connect();
+      const sql =
+        'DELETE FROM mytable WHERE "College" = $1 AND "Program Type" = $2 AND "Category" = $3 AND "Region" = $4';
+
+      const values = [college, programType, category, region];
+      console.log(sql);
+      // console.log(values);
+      await client.query(sql, values);
+      client.release();
+      res.sendStatus(200);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal server error");
+    }
+  }
+);
+app.put("/api/data/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedRow = req.body;
+  console.log(updatedRow)
   try {
-   
     const client = await pool.connect();
-    const sql = 'DELETE FROM mytable WHERE "College" = $1 AND "Program Type" = $2 AND "Category" = $3 AND "Region" = $4';
-    
-    const values = [college, programType, category, region];
-    console.log(sql);
-    console.log(values);
-    await client.query(sql, values);
+
+    // Update the row in the database
+    await client.query(
+      'UPDATE mytable SET "College" = $1, "Program Type" = $2, "Program Name" = $3, "Category" = $4, "Region" = $5, "Hyperlink" = $6 WHERE "id" = $7',
+      [
+        updatedRow.College,
+        updatedRow["Program Type"],
+        updatedRow["Program Name"],
+        updatedRow.Category,
+        updatedRow.Region,
+        updatedRow.Hyperlink,
+        id,
+      ]
+    );
+
     client.release();
-    res.sendStatus(200);
+
+    res.sendStatus(200); // Send a success status code
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    res.status(500).send("Internal server error");
   }
 });
-
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });

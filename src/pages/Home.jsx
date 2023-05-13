@@ -16,6 +16,7 @@ function Home({data}) {
     // Data is empty, show an appropriate message
     return <p>No data available.</p>;
   }
+  
   const handleClearFilters = () => {
     setSelectedValues([]);
     setSearchQuery("");
@@ -99,7 +100,7 @@ function Home({data}) {
     
   };
   const renderDropdowns = () => {
-    const columns = Object.keys(data[0] || {});
+    const columns = Object.keys(data[0] || {}).slice(1); 
     const dropdownColumns = columns.slice(0, -1);
     // dropdownColumns = [
     //   ...dropdownColumns.slice(0, 2),
@@ -166,7 +167,7 @@ function Home({data}) {
   };
 
   const renderFilteredData = () => {
-    const columns = Object.keys(data[0] || {});
+    const columns = Object.keys(data[0] || {}).slice(1); 
     
     if (selectedValues.some((value) => value) || searchQuery) {
       const filteredData = data

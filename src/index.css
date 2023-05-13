@@ -135,7 +135,6 @@ th {
   margin: 0 auto;
   padding-top: 24px;
   min-height: 100vh;
-
 }
 .button-form {
   width: 75%;
@@ -160,26 +159,27 @@ th {
 .form-outline .form-control {
   background-color: rgb(243, 242, 242);
 }
-.btn-group{
+.btn-group {
   display: flex;
   align-items: flex-start;
-  flex-wrap: nowrap; 
-  padding-bottom: 16px; 
+  flex-wrap: nowrap;
+  padding-bottom: 16px;
 }
-.btn{
+.btn {
   margin: 16px;
 }
-.btn:hover{
+.btn:hover {
   background-color: rgb(84, 84, 119);
 }
-.btn-group, .btn-group-vertical {
+.btn-group,
+.btn-group-vertical {
   --mdb-btn-box-shadow: none;
   --mdb-btn-hover-box-shadow: none;
 }
-.form-outline{
+.form-outline {
   display: flex;
 }
-.error-message{
+.error-message {
   color: red;
   padding-left: 16px;
   display: flex;
@@ -187,15 +187,54 @@ th {
   align-items: center;
 }
 .form-select.error {
-
   max-width: 300px;
 }
 
-.form-outline input{
-  max-width:  100px;
-
+.form-outline input {
+  max-width: 100px;
 }
-.form-outline{
+.form-outline {
   padding: 8px;
 }
+.highlighted {
+  background-color: rgb(
+    162,
+    210,
+    226
+  ); /* Choose your desired background color */
+}
 
+.admin-header {
+  display: flex;
+  justify-content: center;
+}
+#admin-sort {
+  padding-left: 8px;
+}
+#value {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pt-3-half {
+  text-align: center;
+  vertical-align: middle;
+}
+.admin-header {
+  display: flex;
+  align-items: center;
+}
+
+#admin-header-text {
+  flex: 1;
+}
+
+#admin-sort {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sort button {
+  padding: 0;
+  margin: 0;
+}
