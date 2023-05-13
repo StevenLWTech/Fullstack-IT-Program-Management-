@@ -5,14 +5,31 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import { move } from "lodash";
 
 export default function Crud({ data }) {
+  // Check if the environment is development
   const isDevelopment = process.env.NODE_ENV === "development";
+
+  // State variable to control whether to show full text or not
   const [showFullText, setShowFullText] = useState(false);
-  const [editingRowId, setEditingRowId] = useState(null); // Track the ID of the row being edited
+
+  // State variable to track the ID of the row being edited
+  const [editingRowId, setEditingRowId] = useState(null);
+
+  // State variable to store the table data
   const [tableData, setTableData] = useState([]);
+
+  // State variable to manage the edit mode of rows
   const [editMode, setEditMode] = useState({});
+
+  // State variable to control whether to show the create form or not
   const [showCreate, setShowCreate] = useState(false);
+
+  // State variable to control whether to show the delete option or not
   const [showDelete, setShowDelete] = useState(true);
+
+  // State variable to store a success message
   const [successMessage, setSuccessMessage] = useState("");
+
+  // State variable to store / clear form data
   const [formData, setFormData] = useState({
     College: "",
     "Program Type": "",
@@ -21,6 +38,7 @@ export default function Crud({ data }) {
     Region: "",
     Hyperlink: "",
   });
+
   const [formErrors, setFormErrors] = useState({
     College: false,
     "Program Type": false,
@@ -41,7 +59,7 @@ export default function Crud({ data }) {
   if (data.length === 0) {
     return <p>No data available.</p>;
   }
-
+  // Resets the child select and error labels in form
   const clearForm = () => {
     setFormData({
       College: "",
@@ -60,23 +78,38 @@ export default function Crud({ data }) {
       Hyperlink: false,
     });
   };
-  
+
+  /**
+   * Function to handle the creation of a new entry.
+   * It toggles the display of the create form, hides the delete option, and clears the form fields and errors.
+   */
   const handleCreate = () => {
     setShowCreate((prevShowForm) => !prevShowForm);
     setShowDelete(false);
     clearForm();
   };
-  
 
+  /**
+   * Function to toggle the display of the delete option.
+   * It toggles the value of `showDelete` and hides the create form.
+   */
   const handleDeleteToggle = () => {
     setShowDelete((prevShowDelete) => !prevShowDelete);
     setShowCreate(false);
   };
 
+  /**
+   * Function to update the table data with new data.
+   * @param {Array} newData - The new data to set as the table data.
+   */
   const setData = (newData) => {
     setTableData(newData);
   };
 
+  /**
+   * Function to toggle the display of full text.
+   * It toggles the value of `showFullText`.
+   */
   const handleShowFullText = () => {
     setShowFullText((prevShowFullText) => !prevShowFullText);
   };
@@ -467,7 +500,7 @@ export default function Crud({ data }) {
                               <>
                                 <button
                                   type="button"
-                                  className="btn btn-default btn-sm"
+                                  className="btn btn-info btn-sm"
                                   onClick={() => handleEdit(row)}
                                 >
                                   Edit
