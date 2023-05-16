@@ -59,6 +59,8 @@ export default function Crud({ data }) {
   if (data.length === 0) {
     return <p>No data available.</p>;
   }
+
+  console.log(data);
   // Resets the child select and error labels in form
   const clearForm = () => {
     setFormData({
@@ -375,6 +377,7 @@ export default function Crud({ data }) {
                   <table className="table table-bordered table-responsive-md table-striped text-center">
                     <thead>
                       <tr>
+            
                         {Object.keys(tableData[0] || {}).map(
                           (column, index) => {
                             if (index !== 0) {
