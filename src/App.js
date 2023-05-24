@@ -19,17 +19,32 @@ function App() {
       const responseData = response.data;
   
       // Convert the response data to the new data structure
-      const newData = responseData.flatMap((item, index) =>
-        item.programs.map((program, programIndex) => ({
-          id: `${index + 1}-${programIndex + 1}`, // Create a new ID using the index values
-          College: item.college,
-          "Program Type": program.program_type,
-          "Program Name": program.program_name,
-          Category: program.category,
-          Region: program.region,
-          Hyperlink: program.hyperlink
-        }))
-      );
+      const newData = responseData.flatMap((item, index) => {
+        if (Array.isArray(item.programs) && item.programs.length > 0) {
+          return item.programs.map((program, programIndex) => ({
+            id: `${index + 1}-${programIndex + 1}`,
+            College: item.college,
+            "Program Type": program.program_type || "",
+            "Program Name": program.program_name || "",
+            Category: program.category || "",
+            Region: program.region || "",
+            Hyperlink: program.hyperlink || ""
+          }));
+        } else {
+          // Create an object with empty values if programs array is empty
+          return [
+            {
+              id: `${index + 1}-1`,
+              College: item.college,
+              "Program Type": "",
+              Category: "",
+              "Program Name": "",
+              Region: "",
+              Hyperlink: ""
+            }
+          ];
+        }
+      });
   
       setData(newData);
     } catch (error) {
@@ -37,6 +52,7 @@ function App() {
     }
   };
   
+
   
   useEffect(() => {
     fetchData();

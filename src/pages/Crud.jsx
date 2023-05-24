@@ -31,9 +31,19 @@ export default function Crud({ data }) {
   });
   useEffect(() => {
     if (data) {
-      setTableData(data);
+      // Sort the table data by the first column in ascending order
+      const sortedData = [...data].sort((a, b) => {
+        const valueA = a["College"] ; // Handle empty strings
+        const valueB = b["College"] ; // Handle empty strings
+        if (valueA < valueB) return -1;
+        if (valueA > valueB) return 1;
+        return 0;
+      });
+
+      setTableData(sortedData);
     }
   }, [data]);
+
   if (data === null) {
     return <p>Loading...</p>;
   }
@@ -60,13 +70,12 @@ export default function Crud({ data }) {
       Hyperlink: false,
     });
   };
-  
+
   const handleCreate = () => {
     setShowCreate((prevShowForm) => !prevShowForm);
     setShowDelete(false);
     clearForm();
   };
-  
 
   const handleDeleteToggle = () => {
     setShowDelete((prevShowDelete) => !prevShowDelete);

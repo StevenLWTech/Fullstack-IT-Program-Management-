@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
-import { move } from "lodash";
-import "./home.css";
+
+import "../styles/home.css";
 
 function Home({ data }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,8 +12,8 @@ function Home({ data }) {
 
   useEffect(() => {
     if (data) {
-      let updatedTableData = data.map(({ Hyperlink, ...rest }) => rest);
-
+      let updatedTableData = data;
+  
       // If any filter values are selected or if a search query is present
       if (selectedValues.some((value) => value !== "") || searchQuery) {
         // Filter rows based on dropdown selections
@@ -31,7 +31,21 @@ function Home({ data }) {
           });
       }
 
-      setTableData(updatedTableData);
+      // Sort the table data by each column in ascending order (ignoring empty strings)
+      const sortedData = [...updatedTableData];
+      Object.keys(data[0])
+        .slice(1)
+        .forEach((column) => {
+          sortedData.sort((a, b) => {
+            const valueA = a["College"] ;
+            const valueB = b["College"] ; 
+            if (valueA < valueB) return -1;
+            if (valueA > valueB) return 1;
+            return 0;
+          });
+        });
+
+      setTableData(sortedData);
     }
   }, [data, selectedValues, searchQuery]);
 
@@ -54,27 +68,6 @@ function Home({ data }) {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
-
-    const programNameDropdown = document.getElementById("dropdown-2");
-    var anySelected = "";
-    var dropdown = "dropdown-";
-    var count = 0;
-    while (true) {
-      const currentDropDown = document.getElementById(dropdown + count);
-      if (currentDropDown) {
-        anySelected += currentDropDown.value;
-      } else {
-        break;
-      }
-      count++;
-    }
-
-    if (anySelected === "") {
-      programNameDropdown.disabled = true;
-      programNameDropdown.value = "";
-    } else {
-      programNameDropdown.disabled = false;
-    }
   };
 
   const removeDuplicatesAndFilter = (column, columnIndex, columns) => {
@@ -88,28 +81,7 @@ function Home({ data }) {
         );
       }
     });
-    const handleSortAscending = (column) => {
-      // Perform sorting logic in ascending order based on the column
-      // Update the table data with the sorted data
-      const sortedData = [...tableData].sort((a, b) => {
-        if (a[column] < b[column]) return -1;
-        if (a[column] > b[column]) return 1;
-        return 0;
-      });
 
-      setTableData(sortedData);
-    };
-
-    const handleSortDescending = (column) => {
-      // Perform sorting logic in descending order based on the column
-      // Update the table data with the sorted data
-      const sortedData = [...tableData].sort((a, b) => {
-        if (a[column] > b[column]) return -1;
-        if (a[column] < b[column]) return 1;
-        return 0;
-      });
-      setTableData(sortedData);
-    };
     const uniqueValues = Array.from(
       new Set(filteredData.map((row) => row[column]))
     );
@@ -124,58 +96,102 @@ function Home({ data }) {
     const columns = Object.keys(data[0] || {}).slice(1);
     const dropdownColumns = columns.slice(0, -1);
 
-    if (!data || data.length === 0) {
-      return null; // Don't render anything if data is null or empty
-    }
-
     return (
       <>
-        {dropdownColumns.map((column, index) => {
-          const filteredValues = removeDuplicatesAndFilter(
-            column,
-            index,
-            dropdownColumns
-          );
-
-          if (filteredValues.length === 0) {
-            return null; // Skip rendering the dropdown if filtered values array is empty
-          }
-
-          return (
-            <div key={index} className="dropdown-container">
-              <select
-                id={`dropdown-${index}`}
-                name={`dropdown-${index}`}
-                value={selectedValues[index] || ""}
-                onChange={(event) => handleDropdownChange(event, index)}
-              >
-                <option key="default" value="" disabled defaultValue>
-                  {column}
+        {dropdownColumns.slice(0, -2).map((column, index) => (
+          <div key={index} className="dropdown-container">
+            <select
+              id={`dropdown-${index}`}
+              name={`dropdown-${index}`}
+              value={selectedValues[index] || ""}
+              onChange={(event) => handleDropdownChange(event, index)}
+              disabled={
+                index === dropdownColumns.length - 1 &&
+                (!selectedValues[0] || !selectedValues[1])
+              }
+            >
+              <option key="default" value="" disabled defaultValue>
+                {column}
+              </option>
+              <option id="clear" key="clear" value=""></option>
+              {removeDuplicatesAndFilter(column, index, dropdownColumns)
+                .filter((value) => value !== "") // Exclude empty values
+                .map((value, i) => (
+                  <option key={i} value={value}>
+                    {value}
+                  </option>
+                ))}
+            </select>
+          </div>
+        ))}
+        {!hideLastColumn && (
+          <div className="dropdown-container">
+            <select
+              id={`dropdown-${dropdownColumns.length - 2}`}
+              name={`dropdown-${dropdownColumns.length - 2}`}
+              value={selectedValues[dropdownColumns.length - 2] || ""}
+              onChange={(event) =>
+                handleDropdownChange(event, dropdownColumns.length - 2)
+              }
+            >
+              <option key="default" value="" disabled defaultValue>
+                {dropdownColumns[dropdownColumns.length - 2]}
+              </option>
+              <option id="clear" key="clear" value="">
+                Cancel
+              </option>
+              {removeDuplicatesAndFilter(
+                dropdownColumns[dropdownColumns.length - 2],
+                dropdownColumns.length - 2,
+                dropdownColumns
+              ).map((value, i) => (
+                <option key={i} value={value}>
+                  {value}
                 </option>
-                <option id="clear" key="clear" value="">
-                  Cancel
+              ))}
+            </select>
+          </div>
+        )}
+        {!hideLastColumn && (
+          <div className="dropdown-container">
+            <select
+              id={`dropdown-${dropdownColumns.length - 1}`}
+              name={`dropdown-${dropdownColumns.length - 1}`}
+              value={selectedValues[dropdownColumns.length - 1] || ""}
+              onChange={(event) =>
+                handleDropdownChange(event, dropdownColumns.length - 1)
+              }
+            >
+              <option key="default" value="" disabled defaultValue>
+                {dropdownColumns[dropdownColumns.length - 1]}
+              </option>
+              <option id="clear" key="clear" value="">
+                Cancel
+              </option>
+              {removeDuplicatesAndFilter(
+                dropdownColumns[dropdownColumns.length - 1],
+                dropdownColumns.length - 1,
+                dropdownColumns
+              ).map((value, i) => (
+                <option key={i} value={value}>
+                  {value}
                 </option>
-                {filteredValues.map((value, i) =>
-                  value ? (
-                    <option key={i} value={value}>
-                      {value}
-                    </option>
-                  ) : null
-                )}
-              </select>
-            </div>
-          );
-        })}
-        {/* Rest of the code */}
+              ))}
+            </select>
+          </div>
+        )}
       </>
     );
   };
+
   const handleSortAscending = (column) => {
     // Perform sorting logic in ascending order based on the column
     // Update the table data with the sorted data
     const sortedData = [...tableData].sort((a, b) => {
-      if (a[column] < b[column]) return -1;
-      if (a[column] > b[column]) return 1;
+      const valueA = a[column] || ""; // Handle empty strings
+      const valueB = b[column] || ""; // Handle empty strings
+      if (valueA < valueB) return -1;
+      if (valueA > valueB) return 1;
       return 0;
     });
 
@@ -186,8 +202,10 @@ function Home({ data }) {
     // Perform sorting logic in descending order based on the column
     // Update the table data with the sorted data
     const sortedData = [...tableData].sort((a, b) => {
-      if (a[column] > b[column]) return -1;
-      if (a[column] < b[column]) return 1;
+      const valueA = a[column] || ""; // Handle empty strings
+      const valueB = b[column] || ""; // Handle empty strings
+      if (valueA > valueB) return -1;
+      if (valueA < valueB) return 1;
       return 0;
     });
 
@@ -229,11 +247,14 @@ function Home({ data }) {
           <div className="card-body">
             <div id="table" className="table-editable">
               <span className="table-add float-right mb-3 mr-2"></span>
-              <table className="table table-bordered table-responsive-md table-striped text-center">
+              <table className="table table-bordered table-responsive-md table-striped text-center table-hover">
                 <thead>
-                  <tr>
+                  <tr >
                     {Object.keys(tableData[0] || {}).map((column, index) => {
-                      if (index !== 0) {
+                      if (
+                        index !== 0 &&
+                        index !== Object.keys(tableData[0]).length - 1
+                      ) {
                         return (
                           <td className="text-center" key={index}>
                             <div className="admin-header">
@@ -256,27 +277,33 @@ function Home({ data }) {
                           </td>
                         );
                       }
-                      return null; // Exclude the first column
+                      return null; // Exclude the first and last columns
                     })}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="table-group-divider table-divider-color">
                   {tableData.map((row) => (
                     <tr
-                      className="table-header"
+                      className="table-header table-Primary"
                       id={`row-${row.id}`}
                       key={row.id}
                     >
                       {Object.entries(row).map(
                         ([column, value], columnIndex) => {
-                          if (column !== "id") {
+                          if (column !== "id" && column !== "Hyperlink") {
                             return (
                               <td className="pt-3-half" key={columnIndex}>
-                                <div id="admin-show-container">{value}</div>
+                                <div id="admin-show-container">
+                                  {column === "Program Name" ? (
+                                    <a href={row.Hyperlink}>{value}</a>
+                                  ) : (
+                                    value
+                                  )}
+                                </div>
                               </td>
                             );
                           }
-                          return null; // Exclude the 'Primary ID' column
+                          return null; // Exclude the 'Primary ID' and 'Hyperlink' columns
                         }
                       )}
                     </tr>
