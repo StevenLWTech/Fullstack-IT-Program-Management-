@@ -10,41 +10,33 @@ import axios from "axios";
 
 function App() {
   const [data, setData] = useState(null);
-  // const fetchData = async () => {
-  //   //console.log("Fetching data...");
-  //   try {
-  //     //   const response = await axios.get(
-  //     //     "https://www.coeforict.org/wp-json/college_programs/v1/college-programs",
-  //     //     {
-
-  //     //     }
-  //     //   );
-  //     const response = await axios.get("http://localhost:8000/api/data");
-
-  //     const modifiedData = response.data.map((item) => {
-  //       const keys = Object.keys(item);
-  //       const programNameIndex = keys.indexOf("Program Name");
-  //       keys.splice(programNameIndex, 1);
-  //       keys.splice(-1, 0, "Program Name");
-  //       const entries = keys.map((key) => [key, item[key]]);
-  //       return Object.fromEntries(entries);
-  //     });
-  //     // console.log("Data fetched:", modifiedData);
-  //     setData(modifiedData);
-  //   } catch (error) {
-  //     // console.log("error" + error)
-  //     // console.error("Error fetching data:", error);
-  //   }
-  // };
+  
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/data");
-      const newData = response.data;
+      const response = await axios.get(
+        "https://www.coeforict.org/wp-json/college_programs/v1/college-programs"
+      );
+      const responseData = response.data;
+  
+      // Convert the response data to the new data structure
+      const newData = responseData.flatMap((item, index) =>
+        item.programs.map((program, programIndex) => ({
+          id: `${index + 1}-${programIndex + 1}`, // Create a new ID using the index values
+          College: item.college,
+          "Program Type": program.program_type,
+          "Program Name": program.program_name,
+          Category: program.category,
+          Region: program.region,
+          Hyperlink: program.hyperlink
+        }))
+      );
+  
       setData(newData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  
   
   useEffect(() => {
     fetchData();

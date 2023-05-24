@@ -1,0 +1,275 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 36px;
+}
+
+h1 {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.search-wrapper {
+  display: flex;
+  justify-content: space-between;
+  min-width: 50%;
+  max-width: 100%;
+  min-height: 42px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+input {
+  min-width: 50%;
+  padding-left: 20px;
+}
+
+.container {
+  max-width: 1280px;
+  min-width: 480px;
+  margin: 0 auto;
+}
+
+.dropdown-container select {
+  min-height: 50px;
+  padding-left: 16px;
+  border-radius: 75px;
+}
+
+button {
+  background-color: white;
+  border-color: transparent;
+}
+
+button:hover {
+  background-color: #e8f0fe;
+}
+
+button {
+  border-radius: 10px;
+}
+
+input {
+  border-radius: 35px;
+}
+
+.dropdowns-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.dropdowns-wrapper button {
+  margin-left: 36px;
+}
+
+.dropdown-container {
+  flex: 1;
+  margin-right: 10px;
+  max-width: 100%;
+}
+
+select {
+  width: 100%;
+  max-width: 300px;
+}
+
+.filtered-data-wrapper {
+  padding-top: 36px;
+}
+
+.filtered-data th {
+  text-align: left;
+}
+
+.filtered-data td {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th:first-child {
+  width: 15%;
+}
+
+th:last-child {
+  width: 15%;
+}
+
+.filtered-data th:nth-child(2) {
+  width: 12%;
+}
+
+.filtered-data th:nth-child(4) {
+  width: 20%;
+}
+
+.table-header {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.table-row {
+  padding-top: 15px;
+}
+
+.search-wrapper {
+  padding-bottom: 16px;
+}
+
+.search-wrapper input {
+  min-height: 36px;
+}
+
+.dropdown-container select {
+  min-height: 50px;
+  padding-left: 16px;
+}
+
+.dropdowns-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+@media screen and (max-width: 700px) {
+  .dropdowns-wrapper {
+    flex-direction: column;
+  }
+}
+
+.dropdown-container {
+  flex: 1;
+  margin-right: 10px;
+  max-width: 100%;
+}
+
+select {
+  width: 100%;
+  max-width: 300px;
+}
+
+#clear {
+  background-color: lightgrey;
+}
+
+.form-outline {
+  display: flex;
+}
+
+.form-text {
+  max-width: 300px;
+}
+
+.crud-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.button-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-outline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.form-outline-a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+@media screen and (max-width: 768px) {
+  .search-wrapper {
+    flex-direction: column;
+    align-items: center;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .search-wrapper input {
+    min-width: 80%;
+    max-width: 100%;
+  }
+
+  .dropdown-container {
+    margin-bottom: 10px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .dropdowns-wrapper button {
+    margin: 8px 0;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .table-row {
+    padding-top: 8px;
+  }
+
+  .table-header {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .table-header td:nth-child(4),
+  .table-header td:nth-child(5) {
+    display: none;
+  }
+  thead td:nth-child(4),
+  thead td:nth-child(5) {
+    display: none;
+  }
+  .dropdowns-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  #toggle-more-filters {
+    display: flex;
+    justify-content: center;
+  }
+  #clear-filters {
+    display: flex;
+    justify-content: center;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .table-header td:nth-child(2),
+  .table-header td:nth-child(4),
+  .table-header td:nth-child(5) {
+    display: none;
+  }
+  thead td:nth-child(5),
+  thead td:nth-child(4),
+  thead td:nth-child(2) {
+    display: none;
+  }
+}

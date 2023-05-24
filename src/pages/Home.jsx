@@ -1,12 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "@fortawesome/fontawesome-free/css/all.css";
+import { move } from "lodash";
+import "./home.css";
 
-
-function Home({data}) {
- 
+function Home({ data }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
   const [hideLastColumn, setHideLastColumn] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      let updatedTableData = data.map(({ Hyperlink, ...rest }) => rest);
+
+      // If any filter values are selected or if a search query is present
+      if (selectedValues.some((value) => value !== "") || searchQuery) {
+        // Filter rows based on dropdown selections
+        updatedTableData = updatedTableData
+          .filter((row) =>
+            selectedValues.every(
+              (value, index) =>
+                !value || row[Object.keys(data[0])[index + 1]] === value
+            )
+          )
+          // Filter rows based on search query
+          .filter((row) => {
+            const values = Object.values(row).join("").toLowerCase();
+            return values.includes(searchQuery.toLowerCase());
+          });
+      }
+
+      setTableData(updatedTableData);
+    }
+  }, [data, selectedValues, searchQuery]);
+
   if (data === null) {
     // Data is still loading, show a loading state
     return <p>Loading...</p>;
@@ -16,38 +44,11 @@ function Home({data}) {
     // Data is empty, show an appropriate message
     return <p>No data available.</p>;
   }
-  
+
   const handleClearFilters = () => {
     setSelectedValues([]);
     setSearchQuery("");
   };
-
-  // const fetchData = async () => {
-  //   //console.log("Fetching data...");
-  //   try {
-  //   //   const response = await axios.get(
-  //   //     "https://www.coeforict.org/wp-json/college_programs/v1/college-programs",
-  //   //     {
-
-  //   //     }
-  //   //   );
-  //   const response = await axios.get("http://localhost:8000/api/data");
-    
-  //     const modifiedData = response.data.map((item) => {
-  //       const keys = Object.keys(item);
-  //       const programNameIndex = keys.indexOf("Program Name");
-  //       keys.splice(programNameIndex, 1);
-  //       keys.splice(-1, 0, "Program Name");
-  //       const entries = keys.map((key) => [key, item[key]]);
-  //       return Object.fromEntries(entries);
-  //     });
-  //     console.log("Data fetched:", modifiedData);
-  //     setData(modifiedData);
-  //   } catch (error) {
-  //     //console.error("Error fetching data:", error);
-  //   }
-  // };
-  
 
   const handleDropdownChange = (event, index) => {
     const newSelectedValues = [...selectedValues];
@@ -58,16 +59,16 @@ function Home({data}) {
     var anySelected = "";
     var dropdown = "dropdown-";
     var count = 0;
-    while(true){
-      const currentDropDown = document.getElementById(dropdown+count)
-      if(currentDropDown){
+    while (true) {
+      const currentDropDown = document.getElementById(dropdown + count);
+      if (currentDropDown) {
         anySelected += currentDropDown.value;
-      }else{
+      } else {
         break;
       }
       count++;
     }
-    
+
     if (anySelected === "") {
       programNameDropdown.disabled = true;
       programNameDropdown.value = "";
@@ -87,7 +88,28 @@ function Home({data}) {
         );
       }
     });
+    const handleSortAscending = (column) => {
+      // Perform sorting logic in ascending order based on the column
+      // Update the table data with the sorted data
+      const sortedData = [...tableData].sort((a, b) => {
+        if (a[column] < b[column]) return -1;
+        if (a[column] > b[column]) return 1;
+        return 0;
+      });
 
+      setTableData(sortedData);
+    };
+
+    const handleSortDescending = (column) => {
+      // Perform sorting logic in descending order based on the column
+      // Update the table data with the sorted data
+      const sortedData = [...tableData].sort((a, b) => {
+        if (a[column] > b[column]) return -1;
+        if (a[column] < b[column]) return 1;
+        return 0;
+      });
+      setTableData(sortedData);
+    };
     const uniqueValues = Array.from(
       new Set(filteredData.map((row) => row[column]))
     );
@@ -97,202 +119,80 @@ function Home({data}) {
   const toggleHideLastColumn = () => {
     setHideLastColumn(!hideLastColumn);
     setIsVisible(!isVisible);
-    
   };
   const renderDropdowns = () => {
-    const columns = Object.keys(data[0] || {}).slice(1); 
+    const columns = Object.keys(data[0] || {}).slice(1);
     const dropdownColumns = columns.slice(0, -1);
-    // dropdownColumns = [
-    //   ...dropdownColumns.slice(0, 2),
-    //   ...dropdownColumns.slice(3),
-    //   dropdownColumns[2],
-    // ];
+
+    if (!data || data.length === 0) {
+      return null; // Don't render anything if data is null or empty
+    }
 
     return (
       <>
-        {dropdownColumns.slice(0, -1).map((column, index) => (
-          <div key={index} className="dropdown-container">
-            <select
-              id={`dropdown-${index}`}
-              name={`dropdown-${index}`}
-              value={selectedValues[index] || ""}
-              onChange={(event) => handleDropdownChange(event, index)}
-            >
-              <option key="default" value="" disabled defaultValue>
-                {column}
-              </option>
-              <option id="clear" key="clear" value="">
-                
-              </option>
-              {removeDuplicatesAndFilter(column, index, dropdownColumns).map(
-                (value, i) => (
-                  <option key={i} value={value}>
-                    {value}
-                  </option>
-                )
-              )}
-            </select>
-          </div>
-        ))}
-        {hideLastColumn ? null : (
-          <div className="dropdown-container">
-            <select
-              id={`dropdown-${dropdownColumns.length - 1}`}
-              name={`dropdown-${dropdownColumns.length - 1}`}
-              value={selectedValues[dropdownColumns.length - 1] || ""}
-              onChange={(event) =>
-                handleDropdownChange(event, dropdownColumns.length - 1)
-              }
-            >
-              <option key="default" value="" disabled defaultValue>
-                {dropdownColumns[dropdownColumns.length - 1]}
-              </option>
-              <option id="clear" key="clear" value="">
-                Cancel
-              </option>
-              {removeDuplicatesAndFilter(
-                dropdownColumns[dropdownColumns.length - 1],
-                dropdownColumns.length - 1,
-                dropdownColumns
-              ).map((value, i) => (
-                <option key={i} value={value}>
-                  {value}
+        {dropdownColumns.map((column, index) => {
+          const filteredValues = removeDuplicatesAndFilter(
+            column,
+            index,
+            dropdownColumns
+          );
+
+          if (filteredValues.length === 0) {
+            return null; // Skip rendering the dropdown if filtered values array is empty
+          }
+
+          return (
+            <div key={index} className="dropdown-container">
+              <select
+                id={`dropdown-${index}`}
+                name={`dropdown-${index}`}
+                value={selectedValues[index] || ""}
+                onChange={(event) => handleDropdownChange(event, index)}
+              >
+                <option key="default" value="" disabled defaultValue>
+                  {column}
                 </option>
-              ))}
-            </select>
-          </div>
-        )}
+                <option id="clear" key="clear" value="">
+                  Cancel
+                </option>
+                {filteredValues.map((value, i) =>
+                  value ? (
+                    <option key={i} value={value}>
+                      {value}
+                    </option>
+                  ) : null
+                )}
+              </select>
+            </div>
+          );
+        })}
+        {/* Rest of the code */}
       </>
     );
   };
+  const handleSortAscending = (column) => {
+    // Perform sorting logic in ascending order based on the column
+    // Update the table data with the sorted data
+    const sortedData = [...tableData].sort((a, b) => {
+      if (a[column] < b[column]) return -1;
+      if (a[column] > b[column]) return 1;
+      return 0;
+    });
 
-  const renderFilteredData = () => {
-    const columns = Object.keys(data[0] || {}).slice(1); 
-    
-    if (selectedValues.some((value) => value) || searchQuery) {
-      const filteredData = data
-        .filter((row) =>
-          selectedValues.every(
-            (value, index) => !value || row[columns[index]] === value
-          )
-        )
-        .filter((row) => {
-          const values = Object.values(row).join("").toLowerCase();
-          return values.includes(searchQuery.toLowerCase());
-        });
-      return (
-        <div className="filtered-data">
-          <table className="filtered-data-table">
-            <thead>
-              <tr>
-                {columns.slice(0, -1).map((column, index) => (
-                  <th className="table-header" key={index}>
-                    {column}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {columns.slice(0, -1).map((column, columnIndex) => {
-                    if (row[column] === null) {
-                      return (
-                        <td className="table-row" key={columnIndex}>
-                          <a
-                            href={row[columns[5]]}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {row[columns[columnIndex - 1]]}
-                          </a>
-                        </td>
-                      );
-                    } else if (columnIndex === 2) {
-                      return (
-                        <td className="table-row" key={columnIndex}>
-                          <a
-                            href={row[columns[5]]}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {row[column]}
-                          </a>
-                        </td>
-                      );
-                    } else {
-                      return (
-                        <td className="table-row" key={columnIndex}>
-                          {row[column]}
-                        </td>
-                      );
-                    }
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    } else {
-      return (
-        <div className="filtered-data">
-          <table className="filtered-data-table">
-            <thead>
-              <tr>
-                {columns.slice(0, -1).map((column, index) => (
-                  <th className="table-header" key={index}>
-                    {column}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {columns.slice(0, -1).map((column, columnIndex) => {
-                    if (row[column] === null) {
-                      return (
-                        <td className="table-row" key={columnIndex}>
-                          <a
-                            href={row[columns[5]]}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {row[columns[columnIndex - 1]]}
-                          </a>
-                        </td>
-                      );
-                    } else if (columnIndex === 2) {
-                      return (
-                        <td className="table-row" key={columnIndex}>
-                          <a
-                            href={row[columns[5]]}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {row[column]}
-                          </a>
-                        </td>
-                      );
-                    } else {
-                      return (
-                        <td className="table-row" key={columnIndex}>
-                          {row[column]}
-                        </td>
-                      );
-                    }
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
- 
+    setTableData(sortedData);
   };
-  
+
+  const handleSortDescending = (column) => {
+    // Perform sorting logic in descending order based on the column
+    // Update the table data with the sorted data
+    const sortedData = [...tableData].sort((a, b) => {
+      if (a[column] > b[column]) return -1;
+      if (a[column] < b[column]) return 1;
+      return 0;
+    });
+
+    setTableData(sortedData);
+  };
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -304,23 +204,91 @@ function Home({data}) {
         <h1>Search IT Programs</h1>
         <div className="dropdowns-wrapper">
           {data.length ? renderDropdowns() : <p>Loading...</p>}
-          <button id = "clear-filters" onClick={handleClearFilters}>Clear Filters</button>
-          <button id = "toggle-more-filters" onClick={toggleHideLastColumn}>{isVisible ? "Less Filters" : "More Filters"}</button>
+          <button id="clear-filters" onClick={handleClearFilters}>
+            Clear Filters
+          </button>
+          <button id="toggle-more-filters" onClick={toggleHideLastColumn}>
+            {isVisible ? "Less Filters" : "More Filters"}
+          </button>
         </div>
         <div className="search-wrapper">
           {isVisible && (
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            className="search-box"
-            onChange={handleSearchInputChange}
-          />)}
-          
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              className="search-box"
+              onChange={handleSearchInputChange}
+            />
+          )}
         </div>
+        <div className="card">
+          <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
+            IT PROGRAMS
+          </h3>
+          <div className="card-body">
+            <div id="table" className="table-editable">
+              <span className="table-add float-right mb-3 mr-2"></span>
+              <table className="table table-bordered table-responsive-md table-striped text-center">
+                <thead>
+                  <tr>
+                    {Object.keys(tableData[0] || {}).map((column, index) => {
+                      if (index !== 0) {
+                        return (
+                          <td className="text-center" key={index}>
+                            <div className="admin-header">
+                              <div id="admin-header-text">{column}</div>
+                              <div id="admin-sort">
+                                <button
+                                  className="sort-button"
+                                  onClick={() => handleSortAscending(column)}
+                                >
+                                  <i className="fa-sharp fa-solid fa-sort-up"></i>
+                                </button>
+                                <button
+                                  className="sort-button"
+                                  onClick={() => handleSortDescending(column)}
+                                >
+                                  <i className="fa-sharp fa-solid fa-sort-down"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                        );
+                      }
+                      return null; // Exclude the first column
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row) => (
+                    <tr
+                      className="table-header"
+                      id={`row-${row.id}`}
+                      key={row.id}
+                    >
+                      {Object.entries(row).map(
+                        ([column, value], columnIndex) => {
+                          if (column !== "id") {
+                            return (
+                              <td className="pt-3-half" key={columnIndex}>
+                                <div id="admin-show-container">{value}</div>
+                              </td>
+                            );
+                          }
+                          return null; // Exclude the 'Primary ID' column
+                        }
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        ;
         <div className="filtered-data-wrapper">
-          
-          {data.length ? renderFilteredData() : null}
+          {/* {data.length ? renderFilteredData() : null} */}
         </div>
       </div>
     </div>
