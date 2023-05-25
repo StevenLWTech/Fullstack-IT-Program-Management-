@@ -159,6 +159,7 @@ function Home({ data }) {
             <select
               id={`dropdown-${dropdownColumns.length - 2}`}
               name={`dropdown-${dropdownColumns.length - 2}`}
+              className={"d-none d-md-block"}
               value={selectedValues[dropdownColumns.length - 2] || ""}
               onChange={(event) =>
                 handleDropdownChange(event, dropdownColumns.length - 2)
@@ -187,6 +188,7 @@ function Home({ data }) {
             <select
               id={`dropdown-${dropdownColumns.length - 1}`}
               name={`dropdown-${dropdownColumns.length - 1}`}
+              className={"d-none d-md-block"}
               value={selectedValues[dropdownColumns.length - 1] || ""}
               onChange={(event) =>
                 handleDropdownChange(event, dropdownColumns.length - 1)
@@ -266,11 +268,11 @@ function Home({ data }) {
           {/* Render dropdown filters */}
           {data.length ? renderDropdowns() : <p>Loading...</p>}
           {/* Clear Filters button */}
-          <button id="clear-filters" onClick={handleClearFilters}>
+          <button id="clear-filters" className="d-md-block" onClick={handleClearFilters}>
             Clear Filters
           </button>
           {/* Toggle More Filters button */}
-          <button id="toggle-more-filters" onClick={toggleHideLastColumn}>
+          <button id="toggle-more-filters" className="d-none d-md-block" onClick={toggleHideLastColumn}>
             {isVisible ? "Less Filters" : "More Filters"}
           </button>
         </div>
@@ -281,13 +283,13 @@ function Home({ data }) {
               type="text"
               placeholder="Search..."
               value={searchQuery}
-              className="search-box"
+              className="search-box d-none d-md-block"
               onChange={handleSearchInputChange}
             />
           )}
         </div>
         <div className="card">
-          <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
+          <h3 className="card-header text-center font-weight-bold text-uppercase py-4" style={{color: '#1c2331'}}>
             IT PROGRAMS
           </h3>
           {/* Table header */}

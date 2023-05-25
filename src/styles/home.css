@@ -7,9 +7,14 @@
 
 }
 
+div.App {
+  background-color: #e0e0e0;
+}
+
 h1 {
   padding-top: 16px;
   padding-bottom: 16px;
+  color: #1c2331;
 }
 
 .search-wrapper {
@@ -39,9 +44,24 @@ input {
   border-radius: 75px;
 }
 
+#toggle-more-filters {
+  display: flex;
+  border-width: 1px;
+  border-color: black;
+  text-align: center;
+  
+}
+#clear-filters {
+  display: flex;
+  justify-content: center;
+  border-color: black;
+  border-width: 1px;
+  text-align: center;
+  
+}
+
 button {
   background-color: white;
-  border-color: transparent;
 }
 
 button:hover {
@@ -147,6 +167,7 @@ th:last-child {
   .dropdowns-wrapper {
     flex-direction: column;
   }
+
 }
 
 .dropdown-container {
@@ -201,7 +222,7 @@ select {
   flex-direction: row;
   align-items: center;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 766px) {
   .search-wrapper {
     flex-direction: column;
     align-items: center;
@@ -254,14 +275,14 @@ select {
     display: flex;
     flex-direction: column;
   }
-  #toggle-more-filters {
-    display: flex;
-    justify-content: center;
+
+  #clear-filters{
+    text-align: center;
+    align-self: center;
+    min-width: 300px;
+    min-height: 30px;
   }
-  #clear-filters {
-    display: flex;
-    justify-content: center;
-  }
+  
 }
 @media only screen and (max-width: 480px) {
   .table-header td:nth-child(2),
