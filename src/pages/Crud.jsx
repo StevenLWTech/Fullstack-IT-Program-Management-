@@ -51,8 +51,8 @@ export default function Crud({ data }) {
     if (data) {
       // Sort the table data by the first column in ascending order
       const sortedData = [...data].sort((a, b) => {
-        const valueA = a["College"] ; // Handle empty strings
-        const valueB = b["College"] ; // Handle empty strings
+        const valueA = a["College"]; // Handle empty strings
+        const valueB = b["College"]; // Handle empty strings
         if (valueA < valueB) return -1;
         if (valueA > valueB) return 1;
         return 0;
@@ -387,7 +387,6 @@ export default function Crud({ data }) {
                   <table className="table table-bordered table-responsive-md table-striped text-center">
                     <thead>
                       <tr>
-            
                         {Object.keys(tableData[0] || {}).map(
                           (column, index) => {
                             if (index !== 0) {

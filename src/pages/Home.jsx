@@ -10,10 +10,16 @@ function Home({ data }) {
   const [isVisible, setIsVisible] = useState(false);
   const [tableData, setTableData] = useState([]);
 
+  /**
+   * useEffect hook that filters and sorts table data based on selected filter values and search query.
+   * @param {Array} data - The original table data.
+   * @param {Array} selectedValues - An array of selected filter values.
+   * @param {String} searchQuery - The search query string.
+   */
   useEffect(() => {
     if (data) {
       let updatedTableData = data;
-  
+
       // If any filter values are selected or if a search query is present
       if (selectedValues.some((value) => value !== "") || searchQuery) {
         // Filter rows based on dropdown selections
@@ -37,8 +43,8 @@ function Home({ data }) {
         .slice(1)
         .forEach((column) => {
           sortedData.sort((a, b) => {
-            const valueA = a["College"] ;
-            const valueB = b["College"] ; 
+            const valueA = a[column];
+            const valueB = b[column];
             if (valueA < valueB) return -1;
             if (valueA > valueB) return 1;
             return 0;
@@ -59,17 +65,32 @@ function Home({ data }) {
     return <p>No data available.</p>;
   }
 
+  /**
+   * Clears the selected filter values and search query.
+   */
   const handleClearFilters = () => {
     setSelectedValues([]);
     setSearchQuery("");
   };
 
+  /**
+   * Handles the change event for dropdown filters.
+   * @param {Object} event - The event object.
+   * @param {number} index - The index of the dropdown filter.
+   */
   const handleDropdownChange = (event, index) => {
     const newSelectedValues = [...selectedValues];
     newSelectedValues[index] = event.target.value;
     setSelectedValues(newSelectedValues);
   };
 
+  /**
+   * Removes duplicates and filters the data based on selected filter values.
+   * @param {string} column - The column name to filter on.
+   * @param {number} columnIndex - The index of the current column.
+   * @param {Array} columns - An array of column names.
+   * @returns {Array} - An array of unique and sorted values for the given column.
+   */
   const removeDuplicatesAndFilter = (column, columnIndex, columns) => {
     let filteredData = data;
 
@@ -88,10 +109,19 @@ function Home({ data }) {
     uniqueValues.sort();
     return uniqueValues;
   };
+
+  /**
+   * Toggles the visibility of the last column in the table.
+   * Updates the state variables hideLastColumn and isVisible.
+   */
   const toggleHideLastColumn = () => {
     setHideLastColumn(!hideLastColumn);
     setIsVisible(!isVisible);
   };
+  /**
+   * Renders the dropdown filters based on the table data.
+   * @returns {JSX.Element} - JSX elements representing the dropdown filters.
+   */
   const renderDropdowns = () => {
     const columns = Object.keys(data[0] || {}).slice(1);
     const dropdownColumns = columns.slice(0, -1);
@@ -184,6 +214,10 @@ function Home({ data }) {
     );
   };
 
+  /**
+   * Sorts the table data in ascending order based on the specified column.
+   * @param {string} column - The column to sort by.
+   */
   const handleSortAscending = (column) => {
     // Perform sorting logic in ascending order based on the column
     // Update the table data with the sorted data
@@ -198,6 +232,10 @@ function Home({ data }) {
     setTableData(sortedData);
   };
 
+  /**
+   * Sorts the table data in descending order based on the specified column.
+   * @param {string} column - The column to sort by.
+   */
   const handleSortDescending = (column) => {
     // Perform sorting logic in descending order based on the column
     // Update the table data with the sorted data
@@ -212,6 +250,10 @@ function Home({ data }) {
     setTableData(sortedData);
   };
 
+  /**
+   * Updates the search query based on the input change event.
+   * @param {Object} event - The input change event object.
+   */
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -221,14 +263,18 @@ function Home({ data }) {
       <div className="container">
         <h1>Search IT Programs</h1>
         <div className="dropdowns-wrapper">
+          {/* Render dropdown filters */}
           {data.length ? renderDropdowns() : <p>Loading...</p>}
+          {/* Clear Filters button */}
           <button id="clear-filters" onClick={handleClearFilters}>
             Clear Filters
           </button>
+          {/* Toggle More Filters button */}
           <button id="toggle-more-filters" onClick={toggleHideLastColumn}>
             {isVisible ? "Less Filters" : "More Filters"}
           </button>
         </div>
+        {/* Search input */}
         <div className="search-wrapper">
           {isVisible && (
             <input
@@ -244,12 +290,14 @@ function Home({ data }) {
           <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
             IT PROGRAMS
           </h3>
+          {/* Table header */}
           <div className="card-body">
             <div id="table" className="table-editable">
               <span className="table-add float-right mb-3 mr-2"></span>
+              {/* Table content */}
               <table className="table table-bordered table-responsive-md table-striped text-center table-hover">
                 <thead>
-                  <tr >
+                  <tr>
                     {Object.keys(tableData[0] || {}).map((column, index) => {
                       if (
                         index !== 0 &&
@@ -313,10 +361,9 @@ function Home({ data }) {
             </div>
           </div>
         </div>
-        ;
-        <div className="filtered-data-wrapper">
-          {/* {data.length ? renderFilteredData() : null} */}
-        </div>
+
+        {/* {data.length ? renderFilteredData() : null} */}
+        <div className="filtered-data-wrapper"></div>
       </div>
     </div>
   );
