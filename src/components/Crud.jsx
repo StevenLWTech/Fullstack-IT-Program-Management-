@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import UniqueDropdown from "./UniqueDropdown";
-import { fetchAllData, insertData, updateData, deleteData } from "../utils/api"; // Assuming you've created this file
-import { useForm } from "../hooks/useForm"; // Assuming you've created this custom hook
-import Form from "./ProgramForm"; // Assuming you've created this component
-import Table from "./Table"; // Assuming you've created this component
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { move } from "lodash";
+import ProgramForm from './ProgramForm';
 
 export default function Crud({ data }) {
   // Check if the environment is development
@@ -35,7 +31,6 @@ export default function Crud({ data }) {
 
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-
   // State variable to store / clear form data
   const [formData, setFormData] = useState({
     College: "",
@@ -45,7 +40,7 @@ export default function Crud({ data }) {
     Region: "",
     Hyperlink: "",
   });
-
+  
   const [formErrors, setFormErrors] = useState({
     College: false,
     "Program Type": false,
@@ -276,9 +271,6 @@ export default function Crud({ data }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-
-
-
     // Perform form validation
     const validateForm = () => {
       let hasErrors = false;
@@ -289,7 +281,6 @@ export default function Crud({ data }) {
           updatedFormErrors[field] = true;
           hasErrors = true;
         } else {
-          
           updatedFormErrors[field] = false;
         }
       });
@@ -334,68 +325,15 @@ export default function Crud({ data }) {
         </div>
         <div className="button-form">
           {showCreate && (
-            <form
-              onSubmit={handleSubmit}
-              className="needs-validation"
-              noValidate
-            >
-              <UniqueDropdown
-                data={tableData}
-                label="College"
-                onChange={handleFormChange}
-                error={formErrors.College}
-                showError={hasSubmitted}
-
-              />
-              <UniqueDropdown
-                data={tableData}
-                label="Program Name"
-                onChange={handleFormChange}
-                error={formErrors["Program Name"]}
-                showError={hasSubmitted}
-
-              />
-              <UniqueDropdown
-                data={tableData}
-                label="Program Type"
-                onChange={handleFormChange}
-                error={formErrors["Program Type"]}
-                showError={hasSubmitted}
-
-              />
-              <UniqueDropdown
-                data={tableData}
-                label="Category"
-                onChange={handleFormChange}
-                error={formErrors["Category"]}
-                showError={hasSubmitted}
-      
-              />
-              <UniqueDropdown
-                data={tableData}
-                label="Region"
-                onChange={handleFormChange}
-                error={formErrors["Region"]}
-                showError={hasSubmitted}
-
-              />
-              <UniqueDropdown
-                data={tableData}
-                label="Hyperlink"
-                onChange={handleFormChange}
-                error={formErrors["Hyperlink"]}
-                showError={hasSubmitted}
-
-              />
-              
-              <button type="submit" className="btn btn-primary btn-block">
-                Submit
-              </button>
-
-              {successMessage && (
-                <p className="text-success mt-2">{successMessage}</p>
-              )}
-            </form>
+            <ProgramForm
+              formData={formData}
+              formErrors={formErrors}
+              handleFormChange={handleFormChange}
+              handleSubmit={handleSubmit}
+              hasSubmitted={hasSubmitted}
+              tableData={tableData}
+              successMessage={successMessage}
+            />
           )}
         </div>
 

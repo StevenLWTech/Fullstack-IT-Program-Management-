@@ -52,7 +52,7 @@ const UniqueDropdown = ({ data, label, onChange, error, showError }) => {
       <button type="button" className="btn-add" onClick={handleToggle}>
         +
       </button>
-      {showError && (
+      {showError && error && (
         <div className="error-message">
           Please select a {label}. 
         </div>

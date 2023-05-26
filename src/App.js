@@ -6,10 +6,9 @@ import Home from "./components/Home";
 import Crud from "./components/Crud";
 import axios from "axios";
 
-
 function App() {
   const [data, setData] = useState(null);
-  
+
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -17,13 +16,13 @@ function App() {
         "http://localhost:8000/api/data"
       );
       const responseData = response.data;
-        console.log(responseData)
+
       setData(responseData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -32,10 +31,8 @@ function App() {
     <Router>
       <Header />
       <Routes>
-      
         <Route path="/admin" element={<Crud data={data} />} />
         <Route path="/" element={<Home data={data} />} />
-        
       </Routes>
       <Footer />
     </Router>
