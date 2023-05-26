@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import UniqueDropdown from "../components/UniqueDropdown";
+import UniqueDropdown from "./UniqueDropdown";
+import { fetchAllData, insertData, updateData, deleteData } from "../utils/api"; // Assuming you've created this file
+import { useForm } from "../hooks/useForm"; // Assuming you've created this custom hook
+import Form from "./ProgramForm"; // Assuming you've created this component
+import Table from "./Table"; // Assuming you've created this component
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { move } from "lodash";
@@ -28,6 +32,9 @@ export default function Crud({ data }) {
 
   // State variable to store a success message
   const [successMessage, setSuccessMessage] = useState("");
+
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
 
   // State variable to store / clear form data
   const [formData, setFormData] = useState({
@@ -70,7 +77,6 @@ export default function Crud({ data }) {
     return <p>No data available.</p>;
   }
 
-  console.log(data);
   // Resets the child select and error labels in form
   const clearForm = () => {
     setFormData({
@@ -99,6 +105,7 @@ export default function Crud({ data }) {
     setShowCreate((prevShowForm) => !prevShowForm);
     setShowDelete(false);
     clearForm();
+    setHasSubmitted(false);
   };
 
   /**
@@ -126,48 +133,6 @@ export default function Crud({ data }) {
     setShowFullText((prevShowFullText) => !prevShowFullText);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    // Perform form validation
-    const validateForm = () => {
-      let hasErrors = false;
-      const updatedFormErrors = { ...formErrors };
-
-      Object.keys(formData).forEach((field) => {
-        if (!formData[field]) {
-          updatedFormErrors[field] = true;
-          hasErrors = true;
-        } else {
-          updatedFormErrors[field] = false;
-        }
-      });
-
-      return { hasErrors, updatedFormErrors };
-    };
-
-    const { hasErrors, updatedFormErrors } = validateForm();
-
-    if (hasErrors) {
-      setFormErrors(updatedFormErrors);
-      return;
-    }
-
-    try {
-      await axios.post("http://localhost:8000/api/insert", formData);
-      console.log("Data inserted successfully!");
-      setSuccessMessage("Success!");
-      clearForm();
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 5000);
-      const response = await axios.get("http://localhost:8000/api/data");
-      const newData = response.data;
-      setData(newData);
-    } catch (error) {
-      console.error("Error inserting data:", error);
-    }
-  };
   const handleEdit = (row) => {
     setEditingRowId(row.id);
     setEditMode((prevEditMode) => ({
@@ -183,28 +148,18 @@ export default function Crud({ data }) {
       tableDataCell.setAttribute("contenteditable", "true");
     });
   };
+  const handleDelete = async (row) => {
+    const id = row.id;
 
-  const handleCancelEdit = (row) => {
-    const originalData = tableData.map((originalRow) => {
-      if (originalRow.id === row.id) {
-        return originalRow;
-      }
-      return originalRow;
-    });
+    try {
+      await axios.delete(`http://localhost:8000/api/delete/${id}`);
+      console.log("Data deleted successfully!");
 
-    setData(originalData);
-    setEditingRowId(null);
-    setEditMode((prevEditMode) => ({
-      ...prevEditMode,
-      [row.id]: false,
-    }));
-
-    // Remove 'contenteditable' attribute from the <td> elements with class name "pt-3-half"
-    if (isDevelopment) {
-      const targetElements = document.querySelectorAll("td.pt-3-half");
-      targetElements.forEach((element) => {
-        element.removeAttribute("contenteditable");
-      });
+      const response = await axios.get("http://localhost:8000/api/data");
+      const newData = response.data;
+      setData(newData);
+    } catch (error) {
+      console.error("Error deleting data:", error);
     }
   };
 
@@ -259,6 +214,30 @@ export default function Crud({ data }) {
       console.error("Error updating data:", error);
     }
   };
+
+  const handleCancelEdit = (row) => {
+    const originalData = tableData.map((originalRow) => {
+      if (originalRow.id === row.id) {
+        return originalRow;
+      }
+      return originalRow;
+    });
+
+    setData(originalData);
+    setEditingRowId(null);
+    setEditMode((prevEditMode) => ({
+      ...prevEditMode,
+      [row.id]: false,
+    }));
+
+    // Remove 'contenteditable' attribute from the <td> elements with class name "pt-3-half"
+    if (isDevelopment) {
+      const targetElements = document.querySelectorAll("td.pt-3-half");
+      targetElements.forEach((element) => {
+        element.removeAttribute("contenteditable");
+      });
+    }
+  };
   const handleSortAscending = (column) => {
     // Perform sorting logic in ascending order based on the column
     // Update the table data with the sorted data
@@ -282,22 +261,6 @@ export default function Crud({ data }) {
 
     setTableData(sortedData);
   };
-
-  const handleDelete = async (row) => {
-    const id = row.id;
-
-    try {
-      await axios.delete(`http://localhost:8000/api/delete/${id}`);
-      console.log("Data deleted successfully!");
-
-      const response = await axios.get("http://localhost:8000/api/data");
-      const newData = response.data;
-      setData(newData);
-    } catch (error) {
-      console.error("Error deleting data:", error);
-    }
-  };
-
   const handleFormChange = (name, value) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -310,6 +273,53 @@ export default function Crud({ data }) {
     }));
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+
+
+
+    // Perform form validation
+    const validateForm = () => {
+      let hasErrors = false;
+      const updatedFormErrors = { ...formErrors };
+
+      Object.keys(formData).forEach((field) => {
+        if (!formData[field]) {
+          updatedFormErrors[field] = true;
+          hasErrors = true;
+        } else {
+          
+          updatedFormErrors[field] = false;
+        }
+      });
+
+      return { hasErrors, updatedFormErrors };
+    };
+
+    const { hasErrors, updatedFormErrors } = validateForm();
+
+    if (hasErrors) {
+      setHasSubmitted(true);
+      setFormErrors(updatedFormErrors);
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:8000/api/insert", formData);
+      console.log("Data inserted successfully!");
+      setSuccessMessage("Success!");
+      clearForm();
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 5000);
+      const response = await axios.get("http://localhost:8000/api/data");
+      const newData = response.data;
+      setData(newData);
+    } catch (error) {
+      console.error("Error inserting data:", error);
+    }
+  };
   return (
     <div className="container">
       <div className="crud-container">
@@ -334,40 +344,54 @@ export default function Crud({ data }) {
                 label="College"
                 onChange={handleFormChange}
                 error={formErrors.College}
+                showError={hasSubmitted}
+
               />
               <UniqueDropdown
                 data={tableData}
                 label="Program Name"
                 onChange={handleFormChange}
                 error={formErrors["Program Name"]}
+                showError={hasSubmitted}
+
               />
               <UniqueDropdown
                 data={tableData}
                 label="Program Type"
                 onChange={handleFormChange}
                 error={formErrors["Program Type"]}
+                showError={hasSubmitted}
+
               />
               <UniqueDropdown
                 data={tableData}
                 label="Category"
                 onChange={handleFormChange}
                 error={formErrors["Category"]}
+                showError={hasSubmitted}
+      
               />
               <UniqueDropdown
                 data={tableData}
                 label="Region"
                 onChange={handleFormChange}
                 error={formErrors["Region"]}
+                showError={hasSubmitted}
+
               />
               <UniqueDropdown
                 data={tableData}
                 label="Hyperlink"
                 onChange={handleFormChange}
                 error={formErrors["Hyperlink"]}
+                showError={hasSubmitted}
+
               />
+              
               <button type="submit" className="btn btn-primary btn-block">
                 Submit
               </button>
+
               {successMessage && (
                 <p className="text-success mt-2">{successMessage}</p>
               )}
