@@ -16,44 +16,50 @@ function Home({ data }) {
    * @param {Array} selectedValues - An array of selected filter values.
    * @param {String} searchQuery - The search query string.
    */
-  useEffect(() => {
-    if (data) {
-      let updatedTableData = data;
+ /**
+   * useEffect hook that filters and sorts table data based on selected filter values and search query.
+   * @param {Array} data - The original table data.
+   * @param {Array} selectedValues - An array of selected filter values.
+   * @param {String} searchQuery - The search query string.
+   */
+ useEffect(() => {
+  if (data) {
+    let updatedTableData = data;
 
-      // If any filter values are selected or if a search query is present
-      if (selectedValues.some((value) => value !== "") || searchQuery) {
-        // Filter rows based on dropdown selections
-        updatedTableData = updatedTableData
-          .filter((row) =>
-            selectedValues.every(
-              (value, index) =>
-                !value || row[Object.keys(data[0])[index + 1]] === value
-            )
+    // If any filter values are selected or if a search query is present
+    if (selectedValues.some((value) => value !== "") || searchQuery) {
+      // Filter rows based on dropdown selections
+      updatedTableData = updatedTableData
+        .filter((row) =>
+          selectedValues.every(
+            (value, index) =>
+              !value || row[Object.keys(data[0])[index + 1]] === value
           )
-          // Filter rows based on search query
-          .filter((row) => {
-            const values = Object.values(row).join("").toLowerCase();
-            return values.includes(searchQuery.toLowerCase());
-          });
-      }
-
-      // Sort the table data by each column in ascending order (ignoring empty strings)
-      const sortedData = [...updatedTableData];
-      Object.keys(data[0])
-        .slice(1)
-        .forEach((column) => {
-          sortedData.sort((a, b) => {
-            const valueA = a[column];
-            const valueB = b[column];
-            if (valueA < valueB) return -1;
-            if (valueA > valueB) return 1;
-            return 0;
-          });
+        )
+        // Filter rows based on search query
+        .filter((row) => {
+          const values = Object.values(row).join("").toLowerCase();
+          return values.includes(searchQuery.toLowerCase());
         });
-
-      setTableData(sortedData);
     }
-  }, [data, selectedValues, searchQuery]);
+
+    // Sort the table data by columns 1, 2, 3, and 4
+    const sortedData = [...updatedTableData];
+    sortedData.sort((a, b) => {
+      if (a["College"] !== b["College"]) {
+        return a["College"] < b["College"] ? -1 : 1;
+      } else if (a["Program Type"] !== b["Program Type"]) {
+        return a["Program Type"] < b["Program Type"] ? -1 : 1;
+      } else if (a["Program Name"] !== b["Program Name"]) {
+        return a["Program Name"] < b["Program Name"] ? -1 : 1;
+      } else {
+        return a["Category"] < b["Category"] ? -1 : 1;
+      }
+    });
+
+    setTableData(sortedData);
+  }
+}, [data, selectedValues, searchQuery]);
 
   if (data === null) {
     // Data is still loading, show a loading state
