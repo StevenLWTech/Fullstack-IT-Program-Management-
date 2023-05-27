@@ -16,50 +16,50 @@ function Home({ data }) {
    * @param {Array} selectedValues - An array of selected filter values.
    * @param {String} searchQuery - The search query string.
    */
- /**
+  /**
    * useEffect hook that filters and sorts table data based on selected filter values and search query.
    * @param {Array} data - The original table data.
    * @param {Array} selectedValues - An array of selected filter values.
    * @param {String} searchQuery - The search query string.
    */
- useEffect(() => {
-  if (data) {
-    let updatedTableData = data;
+  useEffect(() => {
+    if (data) {
+      let updatedTableData = data;
 
-    // If any filter values are selected or if a search query is present
-    if (selectedValues.some((value) => value !== "") || searchQuery) {
-      // Filter rows based on dropdown selections
-      updatedTableData = updatedTableData
-        .filter((row) =>
-          selectedValues.every(
-            (value, index) =>
-              !value || row[Object.keys(data[0])[index + 1]] === value
+      // If any filter values are selected or if a search query is present
+      if (selectedValues.some((value) => value !== "") || searchQuery) {
+        // Filter rows based on dropdown selections
+        updatedTableData = updatedTableData
+          .filter((row) =>
+            selectedValues.every(
+              (value, index) =>
+                !value || row[Object.keys(data[0])[index + 1]] === value
+            )
           )
-        )
-        // Filter rows based on search query
-        .filter((row) => {
-          const values = Object.values(row).join("").toLowerCase();
-          return values.includes(searchQuery.toLowerCase());
-        });
-    }
-
-    // Sort the table data by columns 1, 2, 3, and 4
-    const sortedData = [...updatedTableData];
-    sortedData.sort((a, b) => {
-      if (a["College"] !== b["College"]) {
-        return a["College"] < b["College"] ? -1 : 1;
-      } else if (a["Program Type"] !== b["Program Type"]) {
-        return a["Program Type"] < b["Program Type"] ? -1 : 1;
-      } else if (a["Program Name"] !== b["Program Name"]) {
-        return a["Program Name"] < b["Program Name"] ? -1 : 1;
-      } else {
-        return a["Category"] < b["Category"] ? -1 : 1;
+          // Filter rows based on search query
+          .filter((row) => {
+            const values = Object.values(row).join("").toLowerCase();
+            return values.includes(searchQuery.toLowerCase());
+          });
       }
-    });
 
-    setTableData(sortedData);
-  }
-}, [data, selectedValues, searchQuery]);
+      // Sort the table data by columns 1, 2, 3, and 4
+      const sortedData = [...updatedTableData];
+      sortedData.sort((a, b) => {
+        if (a["College"] !== b["College"]) {
+          return a["College"] < b["College"] ? -1 : 1;
+        } else if (a["Category"] !== b["Category"]) {
+          return a["Category"] < b["Category"] ? -1 : 1;
+        } else if (a["Program Type"] !== b["Program Type"]) {
+          return a["Program Type"] < b["Program Type"] ? -1 : 1;
+        } else {
+          return a["Program Name"] < b["Program Name"] ? -1 : 1;
+        }
+      });
+
+      setTableData(sortedData);
+    }
+  }, [data, selectedValues, searchQuery]);
 
   if (data === null) {
     // Data is still loading, show a loading state
@@ -111,8 +111,10 @@ function Home({ data }) {
 
     const uniqueValues = Array.from(
       new Set(filteredData.map((row) => row[column]))
-    );
+    ).filter((value) => value !== null); // Exclude empty values
     uniqueValues.sort();
+    // console.log("Unique Values:", uniqueValues); // Console log the unique values
+
     return uniqueValues;
   };
 
@@ -149,7 +151,9 @@ function Home({ data }) {
               <option key="default" value="" disabled defaultValue>
                 {column}
               </option>
-              <option id="clear" key="clear" value=""></option>
+              <option id="clear" key="clear" value="">
+                Clear
+              </option>
               {removeDuplicatesAndFilter(column, index, dropdownColumns)
                 .filter((value) => value !== "") // Exclude empty values
                 .map((value, i) => (
@@ -161,62 +165,40 @@ function Home({ data }) {
           </div>
         ))}
         {!hideLastColumn && (
-          <div className="dropdown-container">
-            <select
-              id={`dropdown-${dropdownColumns.length - 2}`}
-              name={`dropdown-${dropdownColumns.length - 2}`}
-              className={"d-none d-md-block"}
-              value={selectedValues[dropdownColumns.length - 2] || ""}
-              onChange={(event) =>
-                handleDropdownChange(event, dropdownColumns.length - 2)
-              }
-            >
-              <option key="default" value="" disabled defaultValue>
-                {dropdownColumns[dropdownColumns.length - 2]}
-              </option>
-              <option id="clear" key="clear" value="">
-                Cancel
-              </option>
-              {removeDuplicatesAndFilter(
-                dropdownColumns[dropdownColumns.length - 2],
-                dropdownColumns.length - 2,
-                dropdownColumns
-              ).map((value, i) => (
-                <option key={i} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        {!hideLastColumn && (
-          <div className="dropdown-container">
-            <select
-              id={`dropdown-${dropdownColumns.length - 1}`}
-              name={`dropdown-${dropdownColumns.length - 1}`}
-              className={"d-none d-md-block"}
-              value={selectedValues[dropdownColumns.length - 1] || ""}
-              onChange={(event) =>
-                handleDropdownChange(event, dropdownColumns.length - 1)
-              }
-            >
-              <option key="default" value="" disabled defaultValue>
-                {dropdownColumns[dropdownColumns.length - 1]}
-              </option>
-              <option id="clear" key="clear" value="">
-                Cancel
-              </option>
-              {removeDuplicatesAndFilter(
-                dropdownColumns[dropdownColumns.length - 1],
-                dropdownColumns.length - 1,
-                dropdownColumns
-              ).map((value, i) => (
-                <option key={i} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
+          <>
+            {[dropdownColumns.length - 2, dropdownColumns.length - 1].map(
+              (index) => (
+                <div className="dropdown-container" key={index}>
+                  <select
+                    id={`dropdown-${index}`}
+                    name={`dropdown-${index}`}
+                    className={"d-none d-md-block"}
+                    value={selectedValues[index] || ""}
+                    onChange={(event) => handleDropdownChange(event, index)}
+                  >
+                    <option key="default" value="" disabled defaultValue>
+                      {dropdownColumns[index]}
+                    </option>
+                    <option id="clear" key="clear" value="">
+                      Clear
+                    </option>
+                    {removeDuplicatesAndFilter(
+                      dropdownColumns[index],
+                      index,
+                      dropdownColumns
+                    ).map((value, i) => {
+                      // console.log(`Dropdown ${index + 1} - Value: ${value}`);
+                      return (
+                        <option key={i} value={value}>
+                          {value}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              )
+            )}
+          </>
         )}
       </>
     );
@@ -269,16 +251,23 @@ function Home({ data }) {
   return (
     <div className="App">
       <div className="container">
-        <h1>Search IT Programs</h1>
         <div className="dropdowns-wrapper">
           {/* Render dropdown filters */}
           {data.length ? renderDropdowns() : <p>Loading...</p>}
           {/* Clear Filters button */}
-          <button id="clear-filters" className="d-md-block" onClick={handleClearFilters}>
+          <button
+            id="clear-filters"
+            className="d-md-block"
+            onClick={handleClearFilters}
+          >
             Clear Filters
           </button>
           {/* Toggle More Filters button */}
-          <button id="toggle-more-filters" className="d-none d-md-block" onClick={toggleHideLastColumn}>
+          <button
+            id="toggle-more-filters"
+            className="d-none d-md-block"
+            onClick={toggleHideLastColumn}
+          >
             {isVisible ? "Less Filters" : "More Filters"}
           </button>
         </div>
@@ -295,8 +284,11 @@ function Home({ data }) {
           )}
         </div>
         <div className="card">
-          <h3 className="card-header text-center font-weight-bold text-uppercase py-4" style={{color: '#1c2331'}}>
-            IT PROGRAMS
+          <h3
+            className="card-header text-center font-weight-bold text-uppercase py-4"
+            style={{ color: "#1c2331" }}
+          >
+            Search Technology programs
           </h3>
           {/* Table header */}
           <div className="card-body">
@@ -346,12 +338,18 @@ function Home({ data }) {
                     >
                       {Object.entries(row).map(
                         ([column, value], columnIndex) => {
-                          if (column !== "id" && column !== "Hyperlink") {
+                          if (column !== "id"  && column !== "HyperLink") {
                             return (
                               <td className="pt-3-half" key={columnIndex}>
                                 <div id="admin-show-container">
-                                  {column === "Program Name" ? (
-                                    <a href={row.Hyperlink}>{value}</a>
+                                  {column === "Program Name" &&
+                                  value !== "View All Programs" &&
+                                  row.HyperLink ? (
+                                    <a href={row.HyperLink}>{value}</a>
+                                  ) : column === "Program Type" &&
+                                    value === "View All Programs" &&
+                                    row.HyperLink ? (
+                                    <a href={row.HyperLink}>{value}</a>
                                   ) : (
                                     value
                                   )}
@@ -359,7 +357,7 @@ function Home({ data }) {
                               </td>
                             );
                           }
-                          return null; // Exclude the 'Primary ID' and 'Hyperlink' columns
+                          return null; // Exclude the 'Primary ID' and 'HyperLink' columns
                         }
                       )}
                     </tr>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { move } from "lodash";
-import ProgramForm from './ProgramForm';
+import ProgramForm from "./ProgramForm";
 
 export default function Crud({ data }) {
   // Check if the environment is development
@@ -40,7 +40,7 @@ export default function Crud({ data }) {
     Region: "",
     Hyperlink: "",
   });
-  
+
   const [formErrors, setFormErrors] = useState({
     College: false,
     "Program Type": false,
@@ -341,7 +341,7 @@ export default function Crud({ data }) {
           {showDelete && (
             <>
               <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
-                IT PROGRAMS
+                Search technology programs
               </h3>
               <div className="card-body">
                 <div id="table" className="table-editable">

@@ -10,6 +10,9 @@
 div.App {
   background-color: #e0e0e0;
 }
+.container {
+  padding-top: 48px;
+}
 
 h1 {
   padding-top: 16px;
