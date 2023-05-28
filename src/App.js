@@ -15,6 +15,7 @@ function App() {
       const response = await axios.get(
         "https://www.coeforict.org/wp-json/college_programs/v1/college-programs"
       );
+      // const responseData = response.data;
       const responseData = response.data.map((item) => {
         return {
           id: item.uuid|| "",
