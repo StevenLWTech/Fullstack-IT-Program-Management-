@@ -44,14 +44,14 @@ function removeDuplicatesAndFilter(
 // Moved outside the component
 function sortTableData(data) {
   return [...data].sort((a, b) => {
-    if (a["College"] !== b["College"]) {
-      return a["College"] < b["College"] ? -1 : 1;
-    } else if (a["Category"] !== b["Category"]) {
-      return a["Category"] < b["Category"] ? -1 : 1;
-    } else if (a["Program Type"] !== b["Program Type"]) {
-      return a["Program Type"] < b["Program Type"] ? -1 : 1;
+    if (a["college"] !== b["college"]) {
+      return a["college"] < b["college"] ? -1 : 1;
+    } else if (a["category"] !== b["category"]) {
+      return a["category"] < b["category"] ? -1 : 1;
+    } else if (a["program_type"] !== b["program_type"]) {
+      return a["program_type"] < b["program_type"] ? -1 : 1;
     } else {
-      return a["Program Name"] < b["Program Name"] ? -1 : 1;
+      return a["program_name"] < b["program_name"] ? -1 : 1;
     }
   });
 }
