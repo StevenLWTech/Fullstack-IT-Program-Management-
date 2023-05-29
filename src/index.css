@@ -204,6 +204,12 @@ th {
     226
   ); /* Choose your desired background color */
 }
+.triangle-up,
+.triangle-down {
+  font-size: 12px; /* Adjust the size as needed */
+  margin-bottom: 0px;
+  margin-left: 0px;
+}
 
 .admin-header {
   display: flex;

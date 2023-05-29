@@ -52,7 +52,10 @@ function SortableTable({
                           className="sort-button"
                           onClick={() => handleSortAscending(column)}
                         >
-                          <p className="" aria-label="Sort by Ascending">
+                          <p
+                            className="triangle-up"
+                            aria-label="Sort by Ascending"
+                          >
                             &#9650;
                           </p>
                         </button>
@@ -60,7 +63,10 @@ function SortableTable({
                           className="sort-button"
                           onClick={() => handleSortDescending(column)}
                         >
-                          <p className="" aria-label="Sort by Descending">
+                          <p
+                            className="triangle-down"
+                            aria-label="Sort by Descending"
+                          >
                             &#9660;
                           </p>
                         </button>
@@ -81,7 +87,6 @@ function SortableTable({
                     const value = row[column];
                     return (
                       <td
-                        style={{ verticalAlign: "middle" }}
                         className="pt-3-half"
                         key={row.uuid + "_" + columnIndex}
                       >
