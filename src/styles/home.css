@@ -44,7 +44,7 @@ input {
 .dropdown-container select {
   min-height: 50px;
   padding-left: 16px;
-  border-radius: 75px;
+  
 }
 
 #toggle-more-filters {
@@ -69,10 +69,6 @@ button {
 
 button:hover {
   background-color: #e8f0fe;
-}
-
-button {
-  border-radius: 10px;
 }
 
 input {
