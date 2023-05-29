@@ -78,7 +78,7 @@ function Home({ data }) {
           .filter((row) =>
             selectedValues.every(
               (value, index) =>
-                !value || row[Object.keys(data[0])[index + 1]] === value
+                !value || row[Object.keys(data[0])[index + 2]] === value
             )
           )
           // Filter rows based on search query
