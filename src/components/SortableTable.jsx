@@ -29,10 +29,10 @@ function SortableTable({
       key !== "hyperlink" &&
       key !== "featured_image"
   );
-  
 
   return (
     <div className="card">
+      
       <h3 className="card-header text-center font-weight-bold text-uppercase py-4">
         {header}
       </h3>
@@ -47,10 +47,7 @@ function SortableTable({
                 {columns.map((column, index) => (
                   <td className="text-center" key={column}>
                     <div className="admin-header">
-                      <div id="admin-header-text">
-                        
-                        {getColumnLabel(column)}
-                      </div>
+                      <div id="admin-header-text">{getColumnLabel(column)}</div>
                       <div id="admin-sort">
                         <button
                           className="sort-button"
@@ -101,11 +98,15 @@ function SortableTable({
                             <a href={row.hyperlink}>{value}</a>
                           ) : (
                             value
-                          )
-                          }
-                          {column === "college" && row.featured_image !== false ? (
+                          )}
+                          <div>
+                            {column === "college" &&
+                            row.featured_image !== false ? (
                               <img src={row.featured_image} alt={row.college} />
-                            ) : ""}
+                            ) : (
+                              ""
+                            )}
+                          </div>
                         </div>
                       </td>
                     );

@@ -178,6 +178,7 @@ function Home({ data }) {
   return (
     <div className="App">
       <div className="container">
+     
         <div className="dropdowns-wrapper">
           {/* Render dropdown filters */}
           {data.length ? (
