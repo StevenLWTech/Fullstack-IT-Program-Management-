@@ -19,9 +19,10 @@ async function dropAndImportData() {
       CREATE TABLE IF NOT EXISTS mytable (
         id serial PRIMARY KEY,
         "College" text COLLATE pg_catalog."default",
+        "featured_image" text COLLATE pg_catalog."default",
+        "Program Name" text COLLATE pg_catalog."default",
         "Category" text COLLATE pg_catalog."default",
         "Program Type" text COLLATE pg_catalog."default",
-        "Program Name" text COLLATE pg_catalog."default",
         "Region" text COLLATE pg_catalog."default",
         "HyperLink" text COLLATE pg_catalog."default"
       );
@@ -54,12 +55,13 @@ async function dropAndImportData() {
       const hyperlink = url || hyperlinkC || "";
       console.log(row["Program Type"] + " " + hyperlink);
       const insertQuery = {
-        text: 'INSERT INTO mytable ("College", "Category","Program Type", "Program Name",  "Region", "HyperLink") VALUES ($1, $2, $3, $4, $5, $6)',
+        text: 'INSERT INTO mytable ("College", "featured_image","Program Name","Category", "Program Type","Region", "HyperLink") VALUES ($1, $2, $3, $4, $5, $6, $7)',
         values: [
           row["College"],
+          row["featured_image"],
+          row["Program Name"],
           row["Category"],
           row["Program Type"],
-          row["Program Name"],
           row["Region"],
           hyperlink,
         ],

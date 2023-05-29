@@ -26,7 +26,8 @@ function SortableTable({
       key !== "program_id" &&
       key !== "HyperLink" &&
       key !== "id" &&
-      key !== "hyperlink"
+      key !== "hyperlink" &&
+      key !== "featured_image"
   );
   
 
@@ -100,7 +101,11 @@ function SortableTable({
                             <a href={row.hyperlink}>{value}</a>
                           ) : (
                             value
-                          )}
+                          )
+                          }
+                          {column === "college" && row.featured_image !== false ? (
+                              <img src="https://i.imgur.com/G4Sbhcy.png" alt={row.Icon} />
+                            ) : ""}
                         </div>
                       </td>
                     );
