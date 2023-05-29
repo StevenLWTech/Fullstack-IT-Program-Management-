@@ -4,6 +4,7 @@
   margin: 0;
 }
 .App {
+  margin-top: 155px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -35,7 +36,6 @@ input {
   min-width: 480px;
   margin: 0 auto;
 }
-
 
 .select-invisible {
   display: none;
@@ -81,7 +81,6 @@ table {
 .dropdown-container select {
   min-height: 50px;
   padding-left: 16px;
-  border-radius: 75px;
 }
 button {
   background-color: white;
@@ -89,9 +88,6 @@ button {
 }
 button:hover {
   background-color: #e8f0fe;
-}
-button {
-  border-radius: 10px;
 }
 input {
   border-radius: 35px;
