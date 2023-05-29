@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Home from "./components/Home";
 import axios from "axios";
 
@@ -23,7 +26,15 @@ function App() {
     fetchData();
   }, []);
 
-  return <Home data={data} />;
+  return (
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home data={data} />} />
+      </Routes>
+      <Footer />
+    </Router>
+  );
 }
 
 export default App;
