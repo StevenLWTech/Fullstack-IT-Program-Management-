@@ -102,14 +102,7 @@ function SortableTable({
                           ) : (
                             value
                           )}
-                          <div>
-                            {column === "college" &&
-                            row.featured_image !== false ? (
-                              <img src={row.featured_image} alt={row.college} />
-                            ) : (
-                              ""
-                            )}
-                          </div>
+
                         </div>
                       </td>
                     );
