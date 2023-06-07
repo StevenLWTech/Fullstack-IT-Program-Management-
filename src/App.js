@@ -39,7 +39,7 @@ function App() {
       const response = await axios.get("http://localhost:8000/api/data");
 
       const responseData = response.data;
-
+   
       setData(responseData);
     } catch (error) {
       console.error("Error fetching data:", error);

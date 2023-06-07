@@ -55,9 +55,9 @@ function ProgramForm({
       />
       <UniqueDropdown
         data={tableData}
-        label="HyperLink"
+        label="Hyperlink"
         onChange={handleFormChange}
-        error={formErrors["HyperLink"]}
+        error={formErrors["Hyperlink"]}
         showError={hasSubmitted}
       />
       <button type="submit" className="btn btn-primary btn-block">

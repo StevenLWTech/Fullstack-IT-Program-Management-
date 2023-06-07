@@ -23,7 +23,7 @@ async function dropAndImportData() {
         "Program Type" text COLLATE pg_catalog."default",
         "Program Name" text COLLATE pg_catalog."default",
         "Region" text COLLATE pg_catalog."default",
-        "HyperLink" text COLLATE pg_catalog."default"
+        "Hyperlink" text COLLATE pg_catalog."default"
       );
     `;
 
@@ -54,7 +54,7 @@ async function dropAndImportData() {
       const hyperlink = url || hyperlinkC || "";
       console.log(row["Program Type"] + " " + hyperlink);
       const insertQuery = {
-        text: 'INSERT INTO mytable ("College", "Category","Program Type", "Program Name",  "Region", "HyperLink") VALUES ($1, $2, $3, $4, $5, $6)',
+        text: 'INSERT INTO mytable ("College", "Category","Program Type", "Program Name",  "Region", "Hyperlink") VALUES ($1, $2, $3, $4, $5, $6)',
         values: [
           row["College"],
           row["Category"],

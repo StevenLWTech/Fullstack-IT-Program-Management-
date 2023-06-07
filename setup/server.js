@@ -48,14 +48,14 @@ app.get("/api/data", async (req, res) => {
 
 app.post("/api/insert", async (req, res) => {
   try {
-    const sql = `INSERT INTO mytable ("College", "Program Type", "Program Name", "Category", "Region", "HyperLink") VALUES ($1, $2, $3, $4, $5, $6)`;
+    const sql = `INSERT INTO mytable ("College", "Program Type", "Program Name", "Category", "Region", "Hyperlink") VALUES ($1, $2, $3, $4, $5, $6)`;
     const {
       College,
       ["Program Type"]: programType,
       ["Program Name"]: programName,
       Category,
       Region,
-      HyperLink,
+      Hyperlink,
     } = req.body;
     console.log(res.body);
     console.log(College);
@@ -63,7 +63,7 @@ app.post("/api/insert", async (req, res) => {
     console.log(programName);
     console.log(Category);
     console.log(Region);
-    console.log(HyperLink);
+    console.log(Hyperlink);
     const client = await pool.connect();
 
     console.log(sql);
@@ -73,7 +73,7 @@ app.post("/api/insert", async (req, res) => {
       programName,
       Category,
       Region,
-      HyperLink,
+      Hyperlink,
     ];
     console.log(values);
 
@@ -112,14 +112,14 @@ app.put("/api/data/:id", async (req, res) => {
 
     // Update the row in the database
     await client.query(
-      'UPDATE mytable SET "College" = $1, "Program Type" = $2, "Program Name" = $3, "Category" = $4, "Region" = $5, "HyperLink" = $6 WHERE "id" = $7',
+      'UPDATE mytable SET "College" = $1, "Program Type" = $2, "Program Name" = $3, "Category" = $4, "Region" = $5, "Hyperlink" = $6 WHERE "id" = $7',
       [
         updatedRow.College,
         updatedRow["Program Type"],
         updatedRow["Program Name"],
         updatedRow.Category,
         updatedRow.Region,
-        updatedRow.HyperLink,
+        updatedRow.Hyperlink,
         id,
       ]
     );

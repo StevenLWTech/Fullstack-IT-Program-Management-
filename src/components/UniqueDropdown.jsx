@@ -12,6 +12,7 @@ const UniqueDropdown = ({ data, label, onChange, error, showError }) => {
 
   const handleChange = (event) => {
     const { value } = event.target;
+    console.log(label);
     setFormData(value);
     onChange(label, value);
   };
