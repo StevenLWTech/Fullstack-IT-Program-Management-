@@ -23,7 +23,7 @@ async function dropAndImportData() {
         "Program Type" text COLLATE pg_catalog."default",
         "Program Name" text COLLATE pg_catalog."default",
         "Region" text COLLATE pg_catalog."default",
-        "Hyperlink" text COLLATE pg_catalog."default"
+        "HyperLink" text COLLATE pg_catalog."default"
       );
     `;
 

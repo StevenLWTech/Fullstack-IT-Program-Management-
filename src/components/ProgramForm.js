@@ -57,7 +57,7 @@ function ProgramForm({
         data={tableData}
         label="Hyperlink"
         onChange={handleFormChange}
-        error={formErrors["Hyperlink"]}
+        error={formErrors["HyperLink"]}
         showError={hasSubmitted}
       />
       <button type="submit" className="btn btn-primary btn-block">
