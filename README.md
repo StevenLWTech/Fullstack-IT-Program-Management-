@@ -63,6 +63,8 @@ node import-data.js
 node server.js
 ```
 
+The local server will be running at `localhost:8000`.
+
 ## Usage
 
 Once the application is running, users can navigate through various IT programs offered by local community colleges in Washington State. The application provides search and filter options for users to narrow down their choices.
