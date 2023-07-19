@@ -63,7 +63,7 @@ node import-data.js
 node server.js
 ```
 
-The local server will be running at `localhost:8000`.
+The local server will be running at `localhost:8000`. 
 
 ## Usage
 
