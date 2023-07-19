@@ -19,6 +19,7 @@ Frontend
 - HTML
 - CSS
 - MDN Bootstrap
+  
 Backend
 - React.js
 - PostgreSQL
@@ -52,9 +53,10 @@ npm start
 ```
 
 The application will be running at `localhost:3000`.
+
 The api can be accessed at https://www.coeforict.org/wp-json/college_programs/v1/college-programs or a localhost server can be created from the setup folder.
 
-To setup a local host 
+To setup a local host navigate to the setup folder
 
 ```
 node import-data.js
