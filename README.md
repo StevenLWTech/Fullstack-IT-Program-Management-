@@ -1,4 +1,4 @@
-# Fullstack IT Programs Search and Filter
+# Fullstack IT Programs Search and Filter with CRUD
 
 ## Description
 
