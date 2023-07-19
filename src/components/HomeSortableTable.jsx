@@ -54,7 +54,7 @@ function SortableTable({ tableData, handleSortAscending, handleSortDescending })
                 >
                   {Object.entries(row).map(
                     ([column, value], columnIndex) => {
-                      if (column !== "id" && column !== "HyperLink") {
+                      if (column !== "id" && column !== "Hyperlink") {
                         return (
                           <td
                             className="pt-3-half"
@@ -62,13 +62,13 @@ function SortableTable({ tableData, handleSortAscending, handleSortDescending })
                           >
                             <div id="admin-show-container">
                               {column === "Program Name" &&
-                              value !== "View All Programs" &&
-                              row.HyperLink ? (
-                                <a href={row.HyperLink}>{value}</a>
+                                value !== "View All Programs" &&
+                                row.Hyperlink ? (
+                                <a href={row.Hyperlink}>{value}</a>
                               ) : column === "Program Type" &&
                                 value === "View All Programs" &&
-                                row.HyperLink ? (
-                                <a href={row.HyperLink}>{value}</a>
+                                row.Hyperlink ? (
+                                <a href={row.Hyperlink}>{value}</a>
                               ) : (
                                 value
                               )}
@@ -76,7 +76,7 @@ function SortableTable({ tableData, handleSortAscending, handleSortDescending })
                           </td>
                         );
                       }
-                      return null; // Exclude the 'Primary ID' and 'HyperLink' columns
+                      return null; // Exclude the 'Primary ID' and 'Hyperlink' columns
                     }
                   )}
                 </tr>

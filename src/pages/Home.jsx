@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
-import SortableTable from "./SortableTable";
+import SortableTable from "../components/HomeSortableTable";
 import "../styles/home.css";
-import Dropdowns from "./HomeDropDowns";
+import Dropdowns from "../components/HomeDropDowns";
 
 /**
  * Removes duplicates and filters data based on selected values from other columns.

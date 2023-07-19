@@ -44,7 +44,7 @@ input {
 .dropdown-container select {
   min-height: 50px;
   padding-left: 16px;
-  border-radius: 75px;
+  /* border-radius: 75px; */
 }
 
 #toggle-more-filters {
@@ -72,11 +72,11 @@ button:hover {
 }
 
 button {
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 input {
-  border-radius: 35px;
+  /* border-radius: 35px; */
 }
 
 .dropdowns-wrapper {

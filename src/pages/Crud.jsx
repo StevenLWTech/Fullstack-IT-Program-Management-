@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { move } from "lodash";
-import ProgramForm from "./ProgramForm";
+import ProgramForm from "../components/ProgramForm";
 
 export default function Crud({ data }) {
   // Check if the environment is development
@@ -394,11 +394,10 @@ export default function Crud({ data }) {
                       {tableData.map((row) => (
                         <tr
                           id={`row-${row.id}`}
-                          className={`hide ${
-                            editingRowId === row.id && editMode[row.id]
+                          className={`hide ${editingRowId === row.id && editMode[row.id]
                               ? "highlighted"
                               : ""
-                          }`}
+                            }`}
                           key={row.id}
                           suppressContentEditableWarning
                         >
@@ -408,9 +407,9 @@ export default function Crud({ data }) {
                                 return (
                                   <td className="pt-3-half" key={columnIndex}>
                                     {value &&
-                                    column === "Hyperlink" &&
-                                    value.length > 30 &&
-                                    !showFullText ? (
+                                      column === "Hyperlink" &&
+                                      value.length > 30 &&
+                                      !showFullText ? (
                                       <>
                                         <div id="admin-show-container">
                                           <span className="value">
