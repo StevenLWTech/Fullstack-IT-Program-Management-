@@ -1,4 +1,4 @@
-# Fullstack IT Programs Search and Filter with CRUD
+# Fullstack IT Programs Search and Filter with CRUD (This branch has been converted to MongoDB)
 
 ## Description
 
@@ -22,11 +22,12 @@ Frontend
   
 Backend
 - React.js
-- PostgreSQL
+- MongoDB (local)
 - Node.js
 - Express.js
 
 ## Installation
+
 
 Clone the repository:
 
@@ -54,12 +55,11 @@ npm start
 
 The application will be running at `localhost:3000`.
 
-The api can be accessed at https://www.coeforict.org/wp-json/college_programs/v1/college-programs or a localhost server can be created from the setup folder.
-
 To setup a local host navigate to the setup folder
 
 ```
-node import-data.js
+(You will need to have a local MongoDB server)
+node export-data-to-mongodb.js
 node server.js
 ```
 
@@ -80,6 +80,10 @@ This application was created by:
 - Steven Truong
 - Edmund Prescott
 - Prashant Aryal
+
+Conversation to MongoDB by:
+
+-Steven Truong
 
 ---
 
