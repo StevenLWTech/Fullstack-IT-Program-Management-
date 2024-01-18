@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import HeaderImage from "./components/common/Header";
+import FooterImage from "./components/common/Footer";
 import Home from "./pages/Home";
 import Crud from "./pages/Crud";
 import axios from "axios";
@@ -18,10 +18,11 @@ function App() {
       const response = await axios.get("http://localhost:8000/api/data");
       
       // live server endpoint
+      // for live endpoint use sql branch
       // const response = await axios.get("https://www.coeforict.org/wp-json/college_programs/v1/college-programs");
 
       const responseData = response.data;
-   
+
       setData(responseData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -34,12 +35,12 @@ function App() {
 
   return (
     <Router>
-      <Header />
+      <HeaderImage />
       <Routes>
         <Route path="/admin" element={<Crud data={data} />} />
         <Route path="/" element={<Home data={data} />} />
       </Routes>
-      <Footer />
+      <FooterImage />
     </Router>
   );
 }

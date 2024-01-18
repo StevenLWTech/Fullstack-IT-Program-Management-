@@ -2,23 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { move } from "lodash";
-import ProgramForm from "../components/ProgramForm";
+import CrudForm from "../components/CrudComponents/CrudForm";
 
 export default function Crud({ data }) {
-  // Check if the environment is development
-  const isDevelopment = process.env.NODE_ENV === "development";
-
-  // State variable to control whether to show full text or not
-  const [showFullText, setShowFullText] = useState(false);
-
-  // State variable to track the ID of the row being edited
-  const [editingRowId, setEditingRowId] = useState(null);
-
   // State variable to store the table data
   const [tableData, setTableData] = useState([]);
 
-  // State variable to manage the edit mode of rows
-  const [editMode, setEditMode] = useState({});
 
   // State variable to control whether to show the create form or not
   const [showCreate, setShowCreate] = useState(false);
@@ -30,6 +19,38 @@ export default function Crud({ data }) {
   const [successMessage, setSuccessMessage] = useState("");
 
   const [hasSubmitted, setHasSubmitted] = useState(false);
+
+  const [editableRows, setEditableRows] = useState({});
+  const [rowUpdates, setRowUpdates] = useState({});
+
+
+  const handleEditClick = (rowId) => {
+    const currentRowData = tableData.find(row => row._id === rowId);
+    if (!currentRowData) {
+      console.error("Row data not found");
+      return;
+    }
+
+    setEditableRows(prevEditableRows => ({
+      ...prevEditableRows,
+      [rowId]: true
+    }));
+
+    // Initialize rowUpdates with the current row data
+    setRowUpdates(prevRowUpdates => ({
+      ...prevRowUpdates,
+      [rowId]: { ...currentRowData }
+    }));
+  };
+  const handleCellChange = (rowId, fieldName, value) => {
+    setRowUpdates(prevRowUpdates => ({
+      ...prevRowUpdates,
+      [rowId]: {
+        ...prevRowUpdates[rowId],
+        [fieldName]: value
+      }
+    }));
+  };
 
   // State variable to store / clear form data
   const [formData, setFormData] = useState({
@@ -120,119 +141,81 @@ export default function Crud({ data }) {
     setTableData(newData);
   };
 
-  /**
-   * Function to toggle the display of full text.
-   * It toggles the value of `showFullText`.
-   */
-  const handleShowFullText = () => {
-    setShowFullText((prevShowFullText) => !prevShowFullText);
-  };
+  const isRowChanged = (rowId) => {
+    const originalRowData = tableData.find(row => row._id === rowId);
+    const updatedRowData = rowUpdates[rowId];
 
-  const handleEdit = (row) => {
-    setEditingRowId(row.id);
-    setEditMode((prevEditMode) => ({
-      ...prevEditMode,
-      [row.id]: true,
-    }));
-
-    // Add 'contenteditable' attribute to the <td> elements of the clicked row
-    const tableDataRow = document.getElementById(`row-${row.id}`);
-
-    const tableDataCells = tableDataRow.querySelectorAll("td.pt-3-half");
-    tableDataCells.forEach((tableDataCell) => {
-      tableDataCell.setAttribute("contenteditable", "true");
+    return Object.keys(originalRowData).some(key => {
+      // Assuming that rowUpdates only contains keys that are editable
+      return updatedRowData[key] !== undefined && updatedRowData[key] !== originalRowData[key];
     });
   };
-  const handleDelete = async (row) => {
-    const id = row.id;
 
-    try {
-      await axios.delete(`http://localhost:8000/api/delete/${id}`);
-      console.log("Data deleted successfully!");
+  const handleCancelEdit = (rowId) => {
 
-      const response = await axios.get("http://localhost:8000/api/data");
-      const newData = response.data;
-      setData(newData);
-    } catch (error) {
-      console.error("Error deleting data:", error);
-    }
+    setEditableRows(prevEditableRows => ({
+      ...prevEditableRows,
+      [rowId]: false
+    }));
+    return; // Exit the function if no changes
   };
+
 
   /**
    * Handles the save edit action for a row.
-   * @param {object} row - The row object being edited.
+   * @param {object} rowId - The row object being edited.
    */
-  const handleSaveEdit = async (row) => {
+  const handleSaveClick = async (rowId) => {
+    if (!isRowChanged(rowId)) {
+      console.log("No changes to save for row:", rowId);
+      setEditableRows(prevEditableRows => ({
+        ...prevEditableRows,
+        [rowId]: false
+      }));
+      return; // Exit the function if no changes
+    }
     try {
-      // Get the row element and its cells
-      const tableDataRow = document.getElementById(`row-${row.id}`);
-      const tableDataCells = tableDataRow.querySelectorAll("td.pt-3-half");
-      tableDataCells.forEach((element) => {
-        element.removeAttribute("contenteditable");
-      });
-      // Create a copy of the row object
-      const updatedRow = { ...row };
-
-      // Update the values of the row object with the edited cell contents
-      tableDataCells.forEach((tableDataCell, columnIndex) => {
-        const columnName = Object.keys(updatedRow)[columnIndex - 1]; // Subtract 1 to exclude the 'Action' column
-
-        if (columnName) {
-          updatedRow[columnName] = tableDataCell.textContent.trim();
-        }
-      });
-
-      console.log(updatedRow);
+      const updatedValues = getUpdatedValuesForRow(rowId);
+      if (!updatedValues) {
+        console.error("Updated values not found");
+        return;
+      }
 
       // Send the updated row data to the server
-      await axios.put(`http://localhost:8000/api/data/${row.id}`, updatedRow);
-      console.log("Data updated successfully!");
+      const response = await axios.put(`http://localhost:8000/api/data/${rowId}`, updatedValues);
+      console.log("Data updated successfully!", response.data);
 
-      // Reset editing state and retrieve the updated data from the server
-      setEditingRowId(null);
-      setEditMode((prevEditMode) => ({
-        ...prevEditMode,
-        [row.id]: false,
-      }));
-      const response = await axios.get("http://localhost:8000/api/data");
-      const newData = response.data;
-
-      // Move the updated row to the top of the table
-      const updatedTableData = move(
-        [...newData],
-        newData.findIndex((data) => data.id === row.id),
-        0
+      // Update the local state with the new data
+      setTableData(prevTableData =>
+        prevTableData.map(row => row._id === rowId ? { ...row, ...updatedValues } : row)
       );
 
-      setData(updatedTableData);
+      // Set the success message and reset the form
+      setSuccessMessage("Row updated successfully!");
+      setTimeout(() => setSuccessMessage(""), 5000); // Clear the success message after 5 seconds
+
+      // Remove the row from the editableRows state
+      setEditableRows(prevEditableRows => ({
+        ...prevEditableRows,
+        [rowId]: false
+      }));
+
+      // Optionally, clear the row updates for the saved row
+      setRowUpdates(prevRowUpdates => {
+        const newRowUpdates = { ...prevRowUpdates };
+        delete newRowUpdates[rowId];
+        return newRowUpdates;
+      });
     } catch (error) {
       console.error("Error updating data:", error);
     }
   };
 
-  const handleCancelEdit = (row) => {
-    const originalData = tableData.map((originalRow) => {
-      if (originalRow.id === row.id) {
-        return originalRow;
-      }
-      return originalRow;
-    });
 
-    setData(originalData);
-    setEditingRowId(null);
-    setEditMode((prevEditMode) => ({
-      ...prevEditMode,
-      [row.id]: false,
-    }));
-
-    // Remove 'contenteditable' attribute from the <td> elements with class name "pt-3-half"
-    if (isDevelopment) {
-      const targetElements = document.querySelectorAll("td.pt-3-half");
-      targetElements.forEach((element) => {
-        element.removeAttribute("contenteditable");
-      });
-    }
+  const getUpdatedValuesForRow = (rowId) => {
+    return rowUpdates[rowId] || {};
   };
+
   const handleSortAscending = (column) => {
     // Perform sorting logic in ascending order based on the column
     // Update the table data with the sorted data
@@ -325,7 +308,7 @@ export default function Crud({ data }) {
         </div>
         <div className="button-form">
           {showCreate && (
-            <ProgramForm
+            <CrudForm
               formData={formData}
               formErrors={formErrors}
               handleFormChange={handleFormChange}
@@ -355,7 +338,7 @@ export default function Crud({ data }) {
                               return (
                                 <td
                                   className="text-center"
-                                  contentEditable="true"
+
                                   key={index}
                                 >
                                   <div className="admin-header">
@@ -392,105 +375,42 @@ export default function Crud({ data }) {
                     </thead>
                     <tbody>
                       {tableData.map((row) => (
-                        <tr
-                          id={`row-${row.id}`}
-                          className={`hide ${editingRowId === row.id && editMode[row.id]
-                              ? "highlighted"
-                              : ""
-                            }`}
-                          key={row.id}
-                          suppressContentEditableWarning
-                        >
-                          {Object.entries(row).map(
-                            ([column, value], columnIndex) => {
-                              if (column !== "id") {
-                                return (
-                                  <td className="pt-3-half" key={columnIndex}>
-                                    {value &&
-                                      column === "Hyperlink" &&
-                                      value.length > 30 &&
-                                      !showFullText ? (
-                                      <>
-                                        <div id="admin-show-container">
-                                          <span className="value">
-                                            {value.substring(0, 15)}...
-                                          </span>
-                                          <button
-                                            id="admin-show-button"
-                                            type="button"
-                                            className="btn btn-link btn-sm ml-2"
-                                            onClick={() => handleShowFullText()}
-                                          >
-                                            Show
-                                          </button>
-                                        </div>
-                                      </>
-                                    ) : (
-                                      <span className="value">
-                                        {value}
-                                        {value &&
-                                          column === "Hyperlink" &&
-                                          value.length > 30 &&
-                                          showFullText && (
-                                            <button
-                                              type="button"
-                                              className="btn btn-link btn-sm ml-2"
-                                              onClick={() =>
-                                                handleShowFullText()
-                                              }
-                                            >
-                                              Hide
-                                            </button>
-                                          )}
-                                      </span>
-                                    )}
-                                  </td>
-                                );
-                              }
-                              return null; // Exclude the 'Primary ID' column
-                            }
-                          )}
+                        <tr key={row._id}>
+                          {Object.keys(row)
+                            .filter(key => key !== '_id') // Filter out the '_id' key
+                            .map(key => (
+                              <td key={key}>
+                                {editableRows[row._id] ? (
+                                  <input
+                                    type="text"
+                                    value={rowUpdates[row._id] && rowUpdates[row._id][key] !== undefined ? String(rowUpdates[row._id][key]) : String(row[key] || "")}
+                                    onChange={(e) => handleCellChange(row._id, key, e.target.value)}
+                                  />
+                                ) : (
+                                  row[key] || ""
+                                )}
+                              </td>
+                            ))}
+                          <td className="button-container">
+                            {/* Toggle button text and functionality based on whether the row is being edited */}
+                            <button
+                              className="edit-cancel-btn"
+                              onClick={() => editableRows[row._id] ? handleCancelEdit(row._id) : handleEditClick(row._id)}>
+                              {editableRows[row._id] ? 'Cancel' : 'Edit'}
+                            </button>
 
-                          <td>
-                            {editingRowId === row.id && editMode[row.id] ? (
-                              <>
-                                <button
-                                  type="button"
-                                  className="btn btn-success btn-sm"
-                                  onClick={() => handleSaveEdit(row)}
-                                >
-                                  <i className="fas fa-check"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-danger btn-sm ml-2"
-                                  onClick={() => handleCancelEdit(row)}
-                                >
-                                  <i className="fas fa-times"></i>
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  type="button"
-                                  className="btn btn-info btn-sm"
-                                  onClick={() => handleEdit(row)}
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-danger btn-sm ml-2"
-                                  onClick={() => handleDelete(row)}
-                                >
-                                  Remove
-                                </button>
-                              </>
+
+                            {/* Save button - onClick, handle saving and remove editable status */}
+                            {editableRows[row._id] && (
+                              <button onClick={() => handleSaveClick(row._id)}>Save</button>
                             )}
                           </td>
                         </tr>
                       ))}
                     </tbody>
+
+
+
                   </table>
                 </div>
               </div>

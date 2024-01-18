@@ -3,6 +3,7 @@ import React, { useState } from "react";
 function Dropdowns({ data, selectedValues, handleDropdownChange, removeDuplicatesAndFilter, hideLastColumn }) {
   const columns = Object.keys(data[0] || {}).slice(1);
   const dropdownColumns = columns.slice(0, -1);
+  
 
   return (
     <>

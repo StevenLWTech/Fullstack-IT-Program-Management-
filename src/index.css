@@ -246,3 +246,13 @@ th {
 .text-success {
   font-size: 48px;
 }
+.edit-cancel-btn {
+    width: 80px; /* or any appropriate width */
+    /* other styles */
+}
+.button-container {
+    display: flex;
+    justify-content: center; /* or 'flex-start' based on your design */
+    align-items: center;
+}
+

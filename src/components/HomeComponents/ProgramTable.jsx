@@ -54,7 +54,7 @@ function SortableTable({ tableData, handleSortAscending, handleSortDescending })
                 >
                   {Object.entries(row).map(
                     ([column, value], columnIndex) => {
-                      if (column !== "id" && column !== "Hyperlink") {
+                      if (column !== "_id" && column !== "Hyperlink") {
                         return (
                           <td
                             className="pt-3-half"

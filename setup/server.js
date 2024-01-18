@@ -31,7 +31,7 @@ const pool = new Pool({
   database: "sql_demo",
 });
 
-const port = 8000;
+const port = 9000;
 
 app.get("/api/data", async (req, res) => {
   try {

@@ -1,7 +1,7 @@
 // ProgramForm.js
 
 import React from 'react';
-import UniqueDropdown from './UniqueDropdown';
+import Dropdown from './CrudDropdown';
 
 function ProgramForm({
   formData,
@@ -18,42 +18,42 @@ function ProgramForm({
       className="needs-validation"
       noValidate
     >
-      <UniqueDropdown
+      <Dropdown
         data={tableData}
         label="College"
         onChange={handleFormChange}
         error={formErrors.College}
         showError={hasSubmitted}
       />
-      <UniqueDropdown
+      <Dropdown
         data={tableData}
         label="Program Name"
         onChange={handleFormChange}
         error={formErrors["Program Name"]}
         showError={hasSubmitted}
       />
-      <UniqueDropdown
+      <Dropdown
         data={tableData}
         label="Program Type"
         onChange={handleFormChange}
         error={formErrors["Program Type"]}
         showError={hasSubmitted}
       />
-      <UniqueDropdown
+      <Dropdown
         data={tableData}
         label="Category"
         onChange={handleFormChange}
         error={formErrors["Category"]}
         showError={hasSubmitted}
       />
-      <UniqueDropdown
+      <Dropdown
         data={tableData}
         label="Region"
         onChange={handleFormChange}
         error={formErrors["Region"]}
         showError={hasSubmitted}
       />
-      <UniqueDropdown
+      <Dropdown
         data={tableData}
         label="Hyperlink"
         onChange={handleFormChange}

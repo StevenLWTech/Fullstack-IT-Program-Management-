@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
-import SortableTable from "../components/HomeSortableTable";
+import SortableTable from "../components/HomeComponents/ProgramTable";
 import "../styles/home.css";
-import Dropdowns from "../components/HomeDropDowns";
+import Dropdowns from "../components/HomeComponents/ProgramDropdown";
 
 /**
  * Removes duplicates and filters data based on selected values from other columns.
@@ -36,7 +36,7 @@ function removeDuplicatesAndFilter(
     new Set(filteredData.map((row) => row[column]))
   ).filter((value) => value !== null); // Exclude empty values
   uniqueValues.sort();
-  // console.log("Unique Values:", uniqueValues); // Console log the unique values
+
 
   return uniqueValues;
 }
