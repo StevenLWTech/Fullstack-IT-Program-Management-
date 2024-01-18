@@ -37,7 +37,7 @@ git clone https://github.com/StevenLWTech/Fullstack-IT-Program-Management-.git
 Navigate into the directory:
 
 ```
-cd Fullstack-IT-Program-Management
+cd .\Fullstack-IT-Program-Management-\
 ```
 
 Install the dependencies:
