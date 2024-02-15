@@ -15,13 +15,13 @@ IT-Program-Management serves as a reliable and efficient tool for individuals se
 This application is built with the following technologies:
 
 Frontend
+- React.js
 - JavaScript
 - HTML
 - CSS
 - MDN Bootstrap
   
 Backend
-- React.js
 - PostgreSQL
 - Node.js
 - Express.js
